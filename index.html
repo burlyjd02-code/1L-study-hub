@@ -928,7 +928,7 @@ const EXAMS = {
   LPS:       { name: "Legal Practice Skills", date: "2026-12-17", color: "var(--lps)", note: "4 Syllabus Units · Closed-Universe Memo" }
 };
 
-const SYLLABUS_UNITS = [
+const const SYLLABUS_UNITS = [
   // TORTS (9 Syllabus Units —  Ch. 1–13, excl. Strict/Products)
   { id: "T1", course: "Torts", code: "Ch. 1", title: "Intentional Torts: Intent, Battery, Assault, FI & IIED",
     trigger: "Fact Trigger: D acts purposefully or knowing harm/contact is substantially certain; or D threatens imminent contact; or D locks/blocks P in; or extreme/outrageous conduct causes severe distress.",
@@ -1316,7 +1316,7 @@ const FACT_TRIGGERS = [
 // ============================================================
 // 3. BALANCED NOV 25 - DEC 17 SCHEDULE (LPS UNIT 1 SKIPPED NOV 25)
 // ============================================================
-const SCHEDULE_DAYS = [
+const const SCHEDULE_DAYS = [
   { date: "2026-11-25", label: "Wed, Nov 25 (Today)", note: "LPS Unit 1 skipped today while you pull extra LPS materials from Claude. Balanced 5-block start across Torts, Crim & Contracts.",
     blocks: [
       { id: "b_1125_1", course: "Torts", unit: "T1", mode: "Foundation + Drill", task: "Intentional Torts (Ch. 1): Intent, Battery, Assault, FI, IIED + Adaptive MCQs" },
@@ -2999,7 +2999,15 @@ renderAll();
     }
   };
 
-  if (typeof renderAll === "function") renderAll();
+  
+  const _origRenderAll = typeof renderAll === "function" ? renderAll : null;
+  renderAll = function() {
+    if (_origRenderAll) _origRenderAll();
+    const u = SYLLABUS_UNITS.find(x => x.id === (state && state.activeUnitId)) || SYLLABUS_UNITS[0];
+    if (u && typeof renderDeepUnit === "function") renderDeepUnit(u);
+  };
+  renderAll();
+
   if (!state.activeUnitId || state.activeUnitId === "T1") {
     state.activeUnitId = "T2";
   }
