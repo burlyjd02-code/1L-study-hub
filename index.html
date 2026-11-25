@@ -536,6 +536,7 @@
     }
   }
 
+  .card, .exam-card, .unit-card, .queue-item { box-shadow: none !important; contain: content; }
 </style>
 </head>
 <body>
@@ -629,15 +630,7 @@
         </div>
         <div id="ws-rule-content"></div>
 
-        <div style="margin-top:14px;">
-          <label style="font-size:13px; font-weight:700;">Active Recall Scratchpad (Retrieve elements &amp; rule before drilling):</label>
-          <textarea class="recall-area" id="ws-recall-input" placeholder="Type the controlling elements, statutory test, or majority rule from memory..."></textarea>
-          <div class="checklist-row" id="ws-recall-checks">
-            <label><input type="checkbox" id="chk-elements" onchange="saveRecallChecks()" /> Recalled core elements</label>
-            <label><input type="checkbox" id="chk-majority" onchange="saveRecallChecks()" /> Recalled majority / statutory / UCC rule</label>
-            <label><input type="checkbox" id="chk-trap" onchange="saveRecallChecks()" /> Spotted exam trap / exception</label>
-          </div>
-        </div>
+
       </div>
 
       <!-- STEP B: ADAPTIVE MCQ / FACT-TRIGGER DRILL -->
@@ -1804,7 +1797,7 @@ function openWorkspaceForUnit(unitId, blockObj = null) {
   }
 
   const recallEl = document.getElementById("ws-recall-input");
-  recallEl.value = state.recallNotes[unit.id] || "";
+  if (recallEl) { recallEl.value = state.recallNotes[unit.id] || "";
   recallEl.oninput = () => {
     state.recallNotes[unit.id] = recallEl.value;
     saveState();
@@ -1813,7 +1806,7 @@ function openWorkspaceForUnit(unitId, blockObj = null) {
   const chks = state.recallChecks[unit.id] || {};
   document.getElementById("chk-elements").checked = !!chks.elements;
   document.getElementById("chk-majority").checked = !!chks.majority;
-  document.getElementById("chk-trap").checked = !!chks.trap;
+  if (document.getElementById("chk-trap")) document.getElementById("chk-trap").checked = !!chks.trap; }
 
   const dayObj = getTodayDayObj();
   const idx = dayObj.blocks.findIndex(b => b.id === state.activeBlockId);
