@@ -488,6 +488,54 @@
     margin-top: 8px;
   }
   .hidden { display: none !important; }
+
+  /* IPHONE & IPAD RESPONSIVE FIXES */
+  @media (max-width: 768px) {
+    header {
+      padding: calc(10px + env(safe-area-inset-top)) 12px 10px 12px;
+      gap: 8px;
+    }
+    .timer-pill {
+      order: 3;
+      width: 100%;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+    .dropdown {
+      position: static;
+    }
+    .dropdown-menu {
+      position: fixed;
+      left: 12px;
+      right: 12px;
+      top: 56px;
+      width: auto;
+      max-width: calc(100vw - 24px);
+      z-index: 999;
+    }
+    .nav-tabs {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: 8px;
+    }
+    .nav-tab {
+      flex: 0 0 auto;
+      font-size: 12px;
+      padding: 7px 11px;
+    }
+    .container {
+      padding: 12px;
+    }
+    #view-lpssim > div:last-child,
+    #view-examsoft > div:last-child {
+      grid-template-columns: 1fr !important;
+    }
+    input, textarea, select {
+      font-size: 16px !important;
+    }
+  }
+
 </style>
 </head>
 <body>
