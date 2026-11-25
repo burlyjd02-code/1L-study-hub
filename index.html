@@ -2115,7 +2115,8 @@ async function syncFromSheet() {
       const action = (cols[actIdx] || "").trim().toLowerCase();
       const rawJson = (cols[payIdx] || "").trim();
       if (!rawJson) continue;
-      const payload = JSON.parse(rawJson);
+      let payload;
+      try { payload = JSON.parse(rawJson); } catch (e) { console.warn("Skipping bad JSON on Sheet row " + (i + 1), e); continue; }
       const itemCourse = normCourse(payload.course || rowCourse);
       if (action === "add_question" && payload.q) {
         if (!QUESTION_BANK.some(x => x.id === payload.id)) {
