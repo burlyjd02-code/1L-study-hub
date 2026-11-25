@@ -2676,13 +2676,16 @@ renderAll();
   if (!window.PHASE1_DATA) return;
   const pUnits = window.PHASE1_DATA.units || [];
   const pMcqs = window.PHASE1_DATA.mcqs || [];
+  const optionalIds = new Set(["T1", "Co1", "Co2"]);
 
   if (pUnits.length && Array.isArray(window.SYLLABUS_UNITS)) {
     window.SYLLABUS_UNITS.length = 0;
     pUnits.forEach(u => {
+      const isOpt = optionalIds.has(u.id);
       const firstSec = (u.sections && u.sections[0]) || {};
       window.SYLLABUS_UNITS.push({
         ...u,
+        optional: isOpt,
         code: u.id,
         trigger: (u.signals && u.signals[0]) || ("Concept Focus: " + (firstSec.heading || u.title)),
         rule: firstSec.rule || "",
@@ -2696,7 +2699,6 @@ renderAll();
     pMcqs.forEach(q => window.MCQ_BANK.push(q));
   }
 
-  // Re-order default queue so priority units (T2 IIED, Cr1 Actus/Mens Rea, Co3 Consideration, Co4 Promissory Estoppel) lead
   if (Array.isArray(window.SCHEDULE_DAYS) && window.SCHEDULE_DAYS.length > 0) {
     window.SCHEDULE_DAYS[0].blocks = [
       { id: "b_p1_1", course: "Torts", unit: "T2", mode: "Deep Lesson + Unit Drill", task: "Unit 2: Intentional Infliction of Emotional Distress (IIED) — Outrageousness, Recklessness & Severe Distress" },
@@ -2707,7 +2709,6 @@ renderAll();
     ];
   }
 
-  // Override openWorkspaceForUnit to render the full 4-Part Deep Professor-Style Lesson + Flowchart + Verbatim Trainer + Unit Drills + CREAC
   window.flowStepIdx = 0;
   window.flowOutcome = "";
   window.clozeLevel = 0;
@@ -2751,8 +2752,9 @@ renderAll();
 
   window.renderDeepUnit = function(unit) {
     const box = document.getElementById("ws-rule-content");
-    if (!box) return;
+    if (!box || !unit) return;
     const unitQCount = MCQ_BANK.filter(q => q.unit === unit.id).length;
+    const isOpt = optionalIds.has(unit.id);
 
     const part1Sections = (unit.sections || []).map((sec, idx) => `
       <div style="padding:12px 14px; border:1px solid var(--border); border-radius:10px; background:var(--surface); margin-bottom:10px;">
@@ -2768,10 +2770,10 @@ renderAll();
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:10px;">
           <strong style="font-size:14px;">★ Verbatim Rules to Memorize ([NAME ON EXAM])</strong>
           <div style="display:flex; gap:5px; flex-wrap:wrap;">
-            <button class="btn-sm ${window.clozeLevel===0?'active-filter':''}" onclick="setClozeLevel(0)">Full Text</button>
-            <button class="btn-sm ${window.clozeLevel===25?'active-filter':''}" onclick="setClozeLevel(25)">25% Blank</button>
-            <button class="btn-sm ${window.clozeLevel===50?'active-filter':''}" onclick="setClozeLevel(50)">50% Blank</button>
-            <button class="btn-sm ${window.clozeLevel===100?'active-filter':''}" onclick="setClozeLevel(100)">100% Blank</button>
+            <button class="btn-sm ${window.clozeLevel===0?active-filter:}" onclick="setClozeLevel(0)">Full Text</button>
+            <button class="btn-sm ${window.clozeLevel===25?active-filter:}" onclick="setClozeLevel(25)">25% Blank</button>
+            <button class="btn-sm ${window.clozeLevel===50?active-filter:}" onclick="setClozeLevel(50)">50% Blank</button>
+            <button class="btn-sm ${window.clozeLevel===100?active-filter:}" onclick="setClozeLevel(100)">100% Blank</button>
           </div>
         </div>
         ${unit.starredRules.map(sr => `
@@ -2839,7 +2841,7 @@ renderAll();
     box.innerHTML = `
       <div style="margin-bottom:8px; display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
         <span class="mode-pill mode-foundation">${unit.course}</span>
-        ${unit.optional ? '<span class="mode-pill mode-hold">Optional / Fast Review Unit</span>' : '<span class="mode-pill mode-exam">Priority Deep Learning Unit</span>'}
+        ${isOpt ? '<span class="mode-pill mode-hold">Optional / Fast Review Unit</span>' : '<span class="mode-pill mode-exam">Priority Deep Learning Unit</span>'}
         <span class="badge-date">${unitQCount} Unit Drill Questions</span>
       </div>
       <h4 style="margin:6px 0 10px 0; font-size:15px;">Part 1 — Deep Concept Breakdown &amp; Black-Letter Rules</h4>
@@ -2852,18 +2854,37 @@ renderAll();
     `;
   };
 
-  const origOpenWs = window.openWorkspaceForUnit;
-  window.openWorkspaceForUnit = function(unitId) {
-    if (typeof origOpenWs === "function") origOpenWs(unitId);
+  // Always open workspace & render deep unit cleanly when a unit is clicked
+  window.openUnitDirectly = function(unitId) {
+    state.activeUnitId = unitId;
+    window.flowStepIdx = 0;
+    window.flowOutcome = "";
+    switchTab("workspace");
     const u = SYLLABUS_UNITS.find(x => x.id === unitId) || SYLLABUS_UNITS[0];
     if (u) {
-      window.flowStepIdx = 0;
-      window.flowOutcome = "";
+      const hdr = document.getElementById("ws-title") || document.querySelector("#view-workspace h2");
+      if (hdr) hdr.textContent = `${u.course} — ${u.title}`;
       renderDeepUnit(u);
+      if (typeof loadDrillQueue === "function") loadDrillQueue(u.id);
     }
   };
 
-  // Free Drill Standalone Controller
+  const origLaunchBlock = window.launchBlock;
+  window.launchBlock = function(blockId) {
+    const day = (SCHEDULE_DAYS || []).find(d => d.blocks.some(b => b.id === blockId)) || (SCHEDULE_DAYS || [])[0];
+    const blk = day && day.blocks.find(b => b.id === blockId);
+    if (typeof origLaunchBlock === "function") origLaunchBlock(blockId);
+    if (blk && blk.unit) window.openUnitDirectly(blk.unit);
+  };
+
+  const origOpenWs = window.openWorkspaceForUnit;
+  window.openWorkspaceForUnit = function(unitId) {
+    if (unitId) state.activeUnitId = unitId;
+    if (typeof origOpenWs === "function") origOpenWs(state.activeUnitId);
+    const u = SYLLABUS_UNITS.find(x => x.id === state.activeUnitId) || SYLLABUS_UNITS[0];
+    if (u) renderDeepUnit(u);
+  };
+
   let fdPool = [];
   let fdIdx = 0;
   let fdAnswered = false;
@@ -2955,7 +2976,6 @@ renderAll();
     `;
   }
 
-  // Patch switchTab to support 'freedrill'
   const origSwitchTab = window.switchTab;
   window.switchTab = function(tab) {
     const fdSec = document.getElementById("view-freedrill");
@@ -2973,15 +2993,18 @@ renderAll();
       return;
     }
     if (typeof origSwitchTab === "function") origSwitchTab(tab);
+    if (tab === "workspace") {
+      const u = SYLLABUS_UNITS.find(x => x.id === state.activeUnitId) || SYLLABUS_UNITS[0];
+      if (u) renderDeepUnit(u);
+    }
   };
 
-  // Initial render refresh
   if (typeof renderAll === "function") renderAll();
   if (!state.activeUnitId || state.activeUnitId === "T1") {
     state.activeUnitId = "T2";
   }
-  openWorkspaceForUnit(state.activeUnitId);
-})();
+  renderDeepUnit(SYLLABUS_UNITS.find(x => x.id === state.activeUnitId) || SYLLABUS_UNITS[0]);
+})();})();
 </script>
 
 </body>
