@@ -673,6 +673,44 @@
   </section>
 
   <!-- VIEW 3: SYLLABUS UNITS (25) -->
+  
+  <!-- FREE DRILL VIEW (STANDALONE SUBJECT / UNIT / SUB-TOPIC DRILLING) -->
+  <section id="view-freedrill" class="hidden">
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+        <div>
+          <h2 style="margin:0; font-size:18px;">⚡ Free Drill — Black-Letter Question Bank</h2>
+          <p style="margin:3px 0 0 0; font-size:12px; color:var(--muted);">Drill any course, unit, or specific sub-topic freely—independent of your daily queue.</p>
+        </div>
+        <span class="badge-date" id="fd-count-badge">0 Questions</span>
+      </div>
+      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:10px; margin-bottom:14px;">
+        <div>
+          <label style="font-size:11px; font-weight:700; color:var(--muted);">1. COURSE</label>
+          <select id="fd-course" onchange="onFdCourseChange()" style="width:100%; padding:8px; border-radius:8px; border:1px solid var(--border); background:var(--surface); color:var(--text);">
+            <option value="ALL">All Courses</option>
+            <option value="Torts">Torts</option>
+            <option value="Criminal Law">Criminal Law</option>
+            <option value="Contracts">Contracts</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:11px; font-weight:700; color:var(--muted);">2. UNIT</label>
+          <select id="fd-unit" onchange="onFdUnitChange()" style="width:100%; padding:8px; border-radius:8px; border:1px solid var(--border); background:var(--surface); color:var(--text);">
+            <option value="ALL">All Units</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:11px; font-weight:700; color:var(--muted);">3. SUB-TOPIC / DOCTRINE</label>
+          <select id="fd-sub" onchange="resetFreeDrill()" style="width:100%; padding:8px; border-radius:8px; border:1px solid var(--border); background:var(--surface); color:var(--text);">
+            <option value="ALL">All Sub-Topics</option>
+          </select>
+        </div>
+      </div>
+      <div id="fd-body"></div>
+    </div>
+  </section>
+
   <section id="view-syllabus" class="hidden">
     <div class="card">
       <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:12px;">
@@ -707,7 +745,7 @@
     <div class="card" style="border-left:5px solid var(--lps);">
       <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
         <div>
-          <h2 style="margin:0; font-size:17px;">⚖️ Timed Closed-Universe LPS Memo Simulator (Prof. Kim Format)</h2>
+          <h2 style="margin:0; font-size:17px;">⚖️ Timed Closed-Universe LPS Memo Simulator (Grading Rubric Format)</h2>
           <p style="margin:3px 0 0 0; font-size:12px; color:var(--muted);">4 Sections Only: <strong>Heading · Question Presented · Brief Answer · Discussion (Umbrella + CREACs)</strong>. No Facts section. No Conclusion unless instructed.</p>
         </div>
         <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; background:var(--bg); padding:8px 12px; border-radius:10px; border:1px solid var(--border);">
@@ -740,7 +778,7 @@
         <div style="display:flex; gap:6px; flex-wrap:wrap;">
           <button class="btn-sm active-filter" id="lps-pane-packet" onclick="setLpsPane('packet')">📄 Packet (File + Library)</button>
           <button class="btn-sm" id="lps-pane-skeleton" onclick="setLpsPane('skeleton')">🦴 CREAC Skeleton Builder</button>
-          <button class="btn-sm" id="lps-pane-rubric" onclick="setLpsPane('rubric')">✅ Prof. Kim's Rubric &amp; 17 Errors</button>
+          <button class="btn-sm" id="lps-pane-rubric" onclick="setLpsPane('rubric')">✅ Predictive Memo Rubric &amp; 17 Errors</button>
           <button class="btn-sm" id="lps-pane-model" onclick="setLpsPane('model')">🔓 Model Memo &amp; Point Sheet</button>
         </div>
       </div>
@@ -854,10 +892,10 @@
       <button class="btn-sm" onclick="closeModal('modal-vault')">✕ Close</button>
     </div>
     <div id="vault-body" style="margin-top:12px; font-size:13px;">
-      <div class="rule-box"><strong>Torts (Prof. Eisenstat — Majority Rules Only):</strong> Focus on majority rules + M.G.L. c. 231 § 85 (51% modified comparative negligence). Strict Liability &amp; Products Liability are excluded.</div>
-      <div class="rule-box"><strong>Criminal Law (Prof. Cody — 1-Page Double-Sided Cheat Sheet):</strong> Always separate Common Law vs. MPC § 2.02 culpability levels. Forcible Rape (Oct 13) is excluded from the Dec 11 final.</div>
-      <div class="rule-box"><strong>Contracts (Prof. Viswanathan — Closed Book):</strong> Gate first: Goods (UCC Art. 2) vs. Services/Real Estate (Common Law / Restatement 2d). Recite Starred Text rules verbatim.</div>
-      <div class="rule-box"><strong>LPS (Prof. Kim — Dec 17 Final):</strong> Closed-universe predictive memo (3:00 base / 4:30 with 1.5x). <strong>4 Sections ONLY:</strong> Heading (exam # in FROM) → Question Presented (1 sentence, roles not names) → Brief Answer (1 para, drafted last) → Discussion (Umbrella + 1 CREAC per disputed element; NO citations in A; "will likely"). <strong>NO Facts section and NO Conclusion section unless instructed.</strong></div>
+      <div class="rule-box"><strong>Torts (Prof.  — Majority Rules Only):</strong> Focus on majority rules + M.G.L. c. 231 § 85 (51% modified comparative negligence). Strict Liability &amp; Products Liability are excluded.</div>
+      <div class="rule-box"><strong>Criminal Law (Prof.  — 1-Page Double-Sided Cheat Sheet):</strong> Always separate Common Law vs. MPC § 2.02 culpability levels. Forcible Rape (Oct 13) is excluded from the Dec 11 final.</div>
+      <div class="rule-box"><strong>Contracts (Prof.  — Closed Book):</strong> Gate first: Goods (UCC Art. 2) vs. Services/Real Estate (Common Law / Restatement 2d). Recite Starred Text rules verbatim.</div>
+      <div class="rule-box"><strong>LPS (Grading Rubric — Dec 17 Final):</strong> Closed-universe predictive memo (3:00 base / 4:30 with 1.5x). <strong>4 Sections ONLY:</strong> Heading (exam # in FROM) → Question Presented (1 sentence, roles not names) → Brief Answer (1 para, drafted last) → Discussion (Umbrella + 1 CREAC per disputed element; NO citations in A; "will likely"). <strong>NO Facts section and NO Conclusion section unless instructed.</strong></div>
     </div>
   </div>
 </div>
@@ -878,19 +916,20 @@
   </div>
 </div>
 
+<script src="phase1_curriculum.js"></script>
 <script>
 // ============================================================
 // 1. EXAM DATES & SYLLABUS-ALIGNED 25 UNITS (WITH FACT TRIGGERS)
 // ============================================================
 const EXAMS = {
-  Torts:     { name: "Torts 1A (Eisenstat)", date: "2026-12-07", color: "var(--torts)", note: "Excl. Strict & Products Liability · Majority Rules" },
-  Crim:      { name: "Criminal Law (Cody)",  date: "2026-12-11", color: "var(--crim)",  note: "Excl. Forcible Rape · 1-Page Double-Sided Cheat Sheet" },
-  Contracts: { name: "Contracts 1A (Viswanathan)", date: "2026-12-14", color: "var(--contracts)", note: "Closed Book · UCC Art. 2 & Restatement 2d" },
-  LPS:       { name: "Legal Practice Skills (Kim)", date: "2026-12-17", color: "var(--lps)", note: "4 Syllabus Units · Closed-Universe Memo" }
+  Torts:     { name: "Torts", date: "2026-12-07", color: "var(--torts)", note: "Excl. Strict & Products Liability · Majority Rules" },
+  Crim:      { name: "Criminal Law",  date: "2026-12-11", color: "var(--crim)",  note: "Excl. Forcible Rape · 1-Page Double-Sided Cheat Sheet" },
+  Contracts: { name: "Contracts", date: "2026-12-14", color: "var(--contracts)", note: "Closed Book · UCC Art. 2 & Restatement 2d" },
+  LPS:       { name: "Legal Practice Skills", date: "2026-12-17", color: "var(--lps)", note: "4 Syllabus Units · Closed-Universe Memo" }
 };
 
 const SYLLABUS_UNITS = [
-  // TORTS (9 Syllabus Units — Eisenstat Ch. 1–13, excl. Strict/Products)
+  // TORTS (9 Syllabus Units —  Ch. 1–13, excl. Strict/Products)
   { id: "T1", course: "Torts", code: "Ch. 1", title: "Intentional Torts: Intent, Battery, Assault, FI & IIED",
     trigger: "Fact Trigger: D acts purposefully or knowing harm/contact is substantially certain; or D threatens imminent contact; or D locks/blocks P in; or extreme/outrageous conduct causes severe distress.",
     rule: "Intent = purpose OR substantial certainty (Garratt). Battery = intentional harmful/offensive contact to person or closely connected object. Assault = intentional act causing reasonable apprehension of imminent harmful/offensive contact. False Imprisonment = intentional confinement within bounded area with awareness or harm. IIED = extreme & outrageous conduct intentionally/recklessly causing severe emotional distress.",
@@ -928,7 +967,7 @@ const SYLLABUS_UNITS = [
     rule: "Joint & Several Liability: each D liable for full indivisible harm (P gets only one full satisfaction). Contribution = pro-rata/comparative share among joint tortfeasors; Indemnity = 100% shift (e.g., vicarious liability). Damages = Special (economic: medicals, lost wages) + General (pain & suffering). Collateral Source Rule = payments from P's insurance do NOT reduce D's liability. Duty to Mitigate = P cannot recover avoidable post-injury damages.",
     trap: "Exam Trap: Collateral Source Rule benefits P—D gets NO credit just because P had good health insurance." },
 
-  // CRIMINAL LAW (6 Syllabus Units — Cody, excl. Forcible Rape)
+  // CRIMINAL LAW (6 Syllabus Units — , excl. Forcible Rape)
   { id: "Cr1", course: "Crim", code: "Classes 1–3", title: "Purposes of Punishment, Incarceration & Who Should Be Punished",
     trigger: "Fact Trigger: Statute or sentencing/culpability debate invokes deterrence, incapacitation, rehabilitation, retributivism, or legality.",
     rule: "Utilitarian theories (general/specific deterrence, incapacitation, rehabilitation) vs. Retributivism (just deserts proportionate to moral culpability). Legality principle (nulla poena sine lege) requires clear prior statutory prohibition.",
@@ -954,7 +993,7 @@ const SYLLABUS_UNITS = [
     rule: "Attempt = specific intent to commit target offense + substantial step (MPC) or dangerous proximity (CL). Abandonment (MPC): completely voluntary and complete renunciation. Conspiracy = agreement + intent to agree + intent target crime be committed (+ overt act in majority/MPC); Pinkerton liability makes conspirators liable for foreseeable co-conspirator crimes in furtherance (rejected by MPC). Complicity (Accomplice) = aids/abets with purpose to facilitate target offense. Entrapment = government inducement + lack of predisposition (subjective majority test).",
     trap: "Exam Trap: Attempt merges into the completed offense; Conspiracy does NOT merge (you can be convicted of both conspiracy and the completed crime)." },
 
-  // CONTRACTS (6 Syllabus Units — Viswanathan)
+  // CONTRACTS (6 Syllabus Units — )
   { id: "Co1", course: "Contracts", code: "Classes 1–6", title: "Governing Law Gate, Formation (Offer/Acceptance), Consideration & Promissory Estoppel",
     trigger: "Fact Trigger: Goods vs. services/land, preliminary negotiations/ads/bids, mailed acceptance/revocation, or reliance without bargained-for exchange.",
     rule: "Step 0: UCC Art. 2 (movable goods — predominant purpose test for hybrids) vs. Common Law (services/real estate). Offer = manifestation of willingness to enter bargain justifying offeree's understanding that assent concludes it (Lucy v. Zehmer objective test; ads generally invitations to deal unless specific/quantity-limited). Mailbox Rule: acceptance effective on dispatch (NOT for option contracts, rejections first, or revocations). Consideration = bargained-for exchange of legal detriment (no past consideration, no pre-existing duty at CL; UCC § 2-209 allows good-faith modification without consideration). Promissory Estoppel (R2d § 90) = promise + foreseeable reasonable reliance + injustice avoided only by enforcement.",
@@ -981,7 +1020,7 @@ const SYLLABUS_UNITS = [
     trap: "Exam Trap: Mere rise in market price or cost almost NEVER satisfies commercial impracticability." },
 
   // LEGAL PRACTICE SKILLS (4 Syllabus Units — Kim; Unit 1 skipped today Nov 25)
-  // LPS (4 Syllabus Units — Prof. Kim Dec 17 Closed-Universe Final Playbook)
+  // LPS (4 Syllabus Units — Grading Rubric Dec 17 Closed-Universe Final Playbook)
   { id: "L1", course: "LPS", code: "Unit 1", title: "Closed-Universe Packet Reading, QP & Brief Answer (No Facts/Conclusion)",
     trigger: "Fact Trigger: Dec 17 Final Exam packet (File + Library). 4 sections ONLY: Heading, Question Presented, Brief Answer, Discussion — NO Facts section and NO Conclusion section unless instructed.",
     rule: "Heading: MEMORANDUM | TO / FROM (exam # only, never name) / DATE / RE. Question Presented (1 sentence): 'Under [statute/rule + brief test], does/will/is [legal question] when [critical favorable facts], but [at least one contrasting fact cutting the other way]?' (Roles, not names; not circular). Brief Answer (1 paragraph, drafted LAST): (1) Commit upfront ('Likely yes.' / 'Probably no.'), (2) Big-picture rule, (3) 'Because' preview tying ONLY facts from the QP to the rule, acknowledging the key counterfact. Little or no citation.",
@@ -994,9 +1033,9 @@ const SYLLABUS_UNITS = [
     trigger: "Fact Trigger: Writing the A section (E1→A1, E2→A2) and applying Bluebook citations across the memo.",
     rule: "A Paragraph 4-Step Formula: (1) Parallel thesis echoing E's keywords + conclusion on client's facts WITHOUT naming a precedent; (2) Begin analysis with 'Here,' and make explicit like/unlike comparisons on determinative facts; (3) Apply the precedent's reasoning & policy to explain why the comparison matters; (4) Raise and resolve the strongest counterpoint in an 'Although...' or 'While...' clause after your main point, then end with a committed 'will likely' conclusion. ZERO citations in A. Citations: cite after EVERY sentence using a case in R/E with a pin cite every time; full cite first, short form after; never 'Id.' after a string cite; signals (no signal = direct/quote, See = inference/synthesized rule, See also = additional support, But see = contrary).",
     trap: "Exam Trap: Any citation in A, naming a precedent in an A thesis, advocacy phrasing ('X may argue'), hedged predictions ('could,' 'plausibly,' 'potentially'), or 'Id.' after a string cite." },
-  { id: "L4", course: "LPS", code: "Unit 4", title: "Timed Closed-Universe Memo Simulator & Prof. Kim's 16-Line Rubric",
+  { id: "L4", course: "LPS", code: "Unit 4", title: "Timed Closed-Universe Memo Simulator & Predictive Memo 16-Line Rubric",
     trigger: "Fact Trigger: 3-hour base clock (4:30 with 1.5x accommodation) closed-book, closed-universe memo exam.",
-    rule: "4:30 Pacing Plan: 0:00–0:22 read File & pull determinative facts; 0:22–1:15 read Library, check pin cites & synthesize rules; 1:15–1:45 build CREAC skeleton; 1:45–3:45 draft Discussion (Umbrella + CREACs); 3:45–4:07 audit A vs. E alignment & draft QP + BA last; 4:07–4:30 run Prof. Kim's 17 Named-Error & Pin-Cite Audit.",
+    rule: "4:30 Pacing Plan: 0:00–0:22 read File & pull determinative facts; 0:22–1:15 read Library, check pin cites & synthesize rules; 1:15–1:45 build CREAC skeleton; 1:45–3:45 draft Discussion (Umbrella + CREACs); 3:45–4:07 audit A vs. E alignment & draft QP + BA last; 4:07–4:30 run Predictive Memo 17 Named-Error & Pin-Cite Audit.",
     trap: "Exam Trap: Speculating beyond packet facts, importing outside cases, writing one-sentence paragraphs, or drafting QP/BA before finishing Discussion." }
 ];
 
@@ -1143,9 +1182,9 @@ const QUESTION_BANK = [
     ans: 1,
     exp: "Under Common Law (Jacob & Youngs v. Kent), substantial performance satisfies the constructive condition of performance. Owner must pay the contract balance minus damages for the minor breach (Perfect Tender applies only to UCC goods)." }
 ,
-  // LPS (Prof. Kim Closed-Universe Memo & Rubric Drills)
+  // LPS (Grading Rubric Closed-Universe Memo & Rubric Drills)
   { id: "q_lps_1", unit: "L1", course: "LPS", diff: 2,
-    q: "On Prof. Kim's December 17 LPS Final Exam, which sections belong in your memorandum unless the packet instructions explicitly direct otherwise?",
+    q: "On Predictive Memo December 17 LPS Final Exam, which sections belong in your memorandum unless the packet instructions explicitly direct otherwise?",
     opts: [
       "Heading, Question Presented, Brief Answer, Facts, Discussion, and Conclusion",
       "Heading, Question Presented, Brief Answer, and Discussion only (no Facts and no Conclusion)",
@@ -1153,9 +1192,9 @@ const QUESTION_BANK = [
       "Question Presented, Brief Answer, Discussion, and Conclusion"
     ],
     ans: 1,
-    exp: "Prof. Kim's final format uses four sections only: Heading, Question Presented, Brief Answer, and Discussion. Do not include a Facts section, and write a Conclusion section only if the instructions ask for one (an extra section is penalized as not following instructions)." },
+    exp: "Predictive Memo final format uses four sections only: Heading, Question Presented, Brief Answer, and Discussion. Do not include a Facts section, and write a Conclusion section only if the instructions ask for one (an extra section is penalized as not following instructions)." },
   { id: "q_lps_2", unit: "L1", course: "LPS", diff: 3,
-    q: "Which Question Presented follows all of Prof. Kim's structural rules?",
+    q: "Which Question Presented follows all of Predictive Memo structural rules?",
     opts: [
       "Under Mass. Gen. Laws ch. 140, § 155, which imposes strict liability on a dog owner unless the injured person was trespassing or teasing the dog, is a homeowner liable when a party guest entered a marked basement and petted a sleeping dog, but the homeowner had invited the guest to the house?",
       "Is Ryan Miller liable as a social host when Lauren Brooks drank wine at his house and hit Emma Clarke?",
@@ -1175,7 +1214,7 @@ const QUESTION_BANK = [
     ans: 1,
     exp: "Draft the QP and BA after the Discussion so they match your actual analysis. The BA opens with 'Likely yes.' or 'Probably no.', states the big-picture rule, and ties ONLY facts already in the QP to the rule with 'because' (including the key counterfact), with little or no citation." },
   { id: "q_lps_4", unit: "L2", course: "LPS", diff: 3,
-    q: "Which mistake violates Prof. Kim's rules for the Rule (R) and Explanation (E) sections of a CREAC?",
+    q: "Which mistake violates Predictive Memo rules for the Rule (R) and Explanation (E) sections of a CREAC?",
     opts: [
       "Stating all statutory elements first, followed by one synthesized rule blended from the cases with citations grouped at the end",
       "Opening each E paragraph with a standalone sub-rule thesis and presenting each case's Facts, Holding, and Reasoning",
@@ -1183,9 +1222,9 @@ const QUESTION_BANK = [
       "Including a contrasting case and specific policy inside the E paragraph"
     ],
     ans: 2,
-    exp: "Prof. Kim penalizes 'parfait' rules (listing rules case by case instead of one blended 'smoothie' rule), mid-sentence citations, placing counter-cases in R (they belong in E, A, and C only), and case-by-case E organization." },
+    exp: "Grading Rubric penalizes 'parfait' rules (listing rules case by case instead of one blended 'smoothie' rule), mid-sentence citations, placing counter-cases in R (they belong in E, A, and C only), and case-by-case E organization." },
   { id: "q_lps_5", unit: "L3", course: "LPS", diff: 3,
-    q: "Which sentence violates Prof. Kim's strict rules for the Application (A) section?",
+    q: "Which sentence violates Predictive Memo strict rules for the Application (A) section?",
     opts: [
       "Here, like the guest in Ulwick who brought his own vodka, Brooks brought her own bottle of red wine.",
       "Although Miller found the request awkward, he could have refused without force, just as a bartender shuts off a patron.",
@@ -1195,7 +1234,7 @@ const QUESTION_BANK = [
     ans: 2,
     exp: "Zero citations are permitted in the Application (A) section—cases do their citing work in R and E only. Also avoid naming a precedent in the A thesis, advocacy phrasing ('X may argue'), or hedged predictions ('could,' 'plausibly')." },
   { id: "q_lps_6", unit: "L3", course: "LPS", diff: 3,
-    q: "Which citation usage violates Prof. Kim's Bluebook mechanics checklist?",
+    q: "Which citation usage violates Predictive Memo Bluebook mechanics checklist?",
     opts: [
       "Using 'Id. at 146.' immediately after a sentence citing only McGuiggan, 496 N.E.2d at 144.",
       "Using 'Id. at 181.' immediately after a string cite: 'McGuiggan, 496 N.E.2d at 146; Juliano, 962 N.E.2d at 181.'",
@@ -1205,7 +1244,7 @@ const QUESTION_BANK = [
     ans: 1,
     exp: "Never use 'Id.' after a string cite because it is ambiguous which authority 'Id.' refers to—use the short form of the specific case instead. Also cite after every sentence that uses a case (with a pin cite every time) and never start a sentence with initials or numbers." },
   { id: "q_lps_7", unit: "L4", course: "LPS", diff: 2,
-    q: "Which prediction phrasing does Prof. Kim require in your conclusions, and which verb matches an appellate court's action?",
+    q: "Which prediction phrasing does Grading Rubric require in your conclusions, and which verb matches an appellate court's action?",
     opts: [
       "'Could' / 'plausibly'; appellate courts 'find'",
       "'Will likely'; trial courts 'find' and appellate courts 'hold'",
@@ -1213,7 +1252,7 @@ const QUESTION_BANK = [
       "'Definitely will'; trial courts 'hold'"
     ],
     ans: 1,
-    exp: "Prof. Kim explicitly requires 'will likely' (flagging 'could,' 'potentially,' 'plausibly,' and 'could be inclined' as hedged errors) and enforces 'Trial courts find; appellate courts hold.'" }
+    exp: "Grading Rubric explicitly requires 'will likely' (flagging 'could,' 'potentially,' 'plausibly,' and 'could be inclined' as hedged errors) and enforces 'Trial courts find; appellate courts hold.'" }
 ,
   // Imported from Torts & Criminal Law Study Tools (excl. Strict/Products & Rape)
   {"id": "imp_torts_mc1", "unit": "T1", "course": "Torts", "diff": 3, "q": "A father directs four masked men to attack a victim from behind. The victim cannot see them coming but hears the father say \"you all come on out\" just before they strike him with nightsticks into semi-consciousness. Which statement about assault is correct?", "opts": ["No assault occurred because the victim did not see the attackers, and apprehension of contact arises from what the victim sees coming.", "The victim's awareness of the father's words satisfies the apprehension requirement, so assault can be established even though he never saw the men.", "Assault requires physical contact, so once the nightsticks struck him the claim is battery, and the moment before the blows adds nothing.", "The father is likely not liable for assault because he did not personally touch the victim; the men who struck the blows are liable."], "ans": 1, "exp": "Assault requires a reasonable apprehension of imminent harmful contact, not necessarily sight of the attacker. Hearing the father's words was enough to create that awareness. Battery has its own, separate analysis (and doesn't require awareness at all), so option C confuses the two torts. The father can also be independently liable, since directing others to commit a tort makes him an indirect actor, so option D is wrong for a different reason."}, {"id": "imp_torts_mc13", "unit": "T2", "course": "Torts", "diff": 3, "q": "A person is attacked and can retreat with complete safety, but instead uses deadly force against the attacker without attempting to retreat. Under Restatement (Second) \u00a7 65, is this privileged?", "opts": ["Yes, because a person who is attacked has no duty to retreat before using deadly force, and she may stand her ground and meet the attack with deadly force even where a safe exit was open.", "No, deadly force carries a duty to retreat first if complete safety is available; failing to take that safe exit before resorting to deadly force removes the privilege.", "Yes, because the duty to retreat applies to defense of property rather than self-defense, so a person defending her own body may use deadly force at once, exit or not.", "No, because a person facing an attack must first try non-deadly force before deadly force can be privileged at all."], "ans": 1, "exp": "Non-deadly force carries no duty to retreat, but deadly force is different under Restatement \u00a765: if complete safety is available through retreat, the actor must take it before resorting to deadly force. Skipping an available, completely safe retreat removes the privilege."}, {"id": "imp_torts_mc8", "unit": "T3", "course": "Torts", "diff": 3, "q": "A tenant falls in a darkened apartment hallway. A teenager threw a rock at the hallway bulb five minutes before the fall, and the landlord had no chance to notice or fix it. What is the most precise way to describe why the landlord is not liable?", "opts": ["The landlord owed no duty to the tenant, because a landlord's responsibility for safety ends at each apartment door and does not extend to the shared hallways at all.", "The landlord owed a duty of reasonable care, but did not breach it, since requiring her to check hallway lights every few minutes would be unreasonable.", "The landlord breached her duty the moment the hallway went dark, but the tenant likely cannot prove causation, because the teenager's rock was the sole cause of the fall.", "Landlords are generally immune from hallway injury claims, because tenants accept the condition of a building's common areas as is when they sign the lease."], "ans": 1, "exp": "Landlords generally do owe tenants a duty of reasonable care in common areas, so \"no duty\" is imprecise here even though courts sometimes say it loosely. The more accurate label is that the duty existed but wasn't breached, since five minutes isn't enough time for a reasonable landlord to have caught and fixed the problem."}, {"id": "imp_torts_mcn6", "unit": "T4", "course": "Torts", "diff": 3, "q": "A father leaves a golf club in the yard. His son has never hurt anyone. The son swings it and injures a neighbor child. On demurrer, what is the likely result for the father?", "opts": ["Demurrer overruled; leaving any object within reach of a young child is negligent.", "Demurrer sustained; a golf club is not intrinsically dangerous and he had no notice.", "Demurrer sustained; parents never owe a duty for a child's acts with any household object.", "Demurrer overruled; the son's negligence is imputed to the father as his parent."], "ans": 1, "exp": "Lubitz v. Wells: a golf club is an ordinary object, and requiring parents to remove every such object is an unreasonable burden. Prior notice or watching the son swing it would change the result, and the son can be negligent separately; nothing is automatically imputed."}, {"id": "imp_torts_hd-duty-0", "unit": "T5", "course": "Torts", "diff": 3, "q": "The jurisdiction gives licensees the duty to have activities conducted reasonably and to be warned of known hidden dangers. Marisol invites her friend Desmond to dinner at her house. Desmond steps onto the back deck to take a phone call. A board that had rotted from underneath gives way, and he injures his ankle. Marisol had never inspected the deck and did not know of the rot, though a careful inspection would have revealed it. Desmond sues Marisol in negligence. Which result is most likely?", "opts": ["Liable, because a dinner guest is an invitee owed reasonable care, including inspection.", "Not liable, because Desmond is a licensee, and she owed no duty to inspect.", "Liable, because a reasonable homeowner would have inspected the deck and found the rot.", "Not liable, because she owed Desmond only a duty to avoid willful or wanton conduct."], "ans": 1, "exp": "A social guest is a licensee. A licensee is owed a warning only of hidden dangers known to the possessor, and Marisol did not know of the rot."}, {"id": "imp_torts_pn2", "unit": "T6", "course": "Torts", "diff": 3, "q": "A statute requires all vessels sailing on the Great Lakes to provide lifeboats. One of the Abel Steamship Company's boats is sent out of port without any such lifeboat.\n\nBen, a sailor, falls overboard in a storm so heavy that had there been a lifeboat it could not have been launched in the sea then running. Ben is drowned.\n\nWhich of the following is the best answer?", "opts": ["The Abel Steamship Company's failure to provide lifeboats is not the but for cause of Ben's death.", "The Abel Steamship Company was negligent per se and the presumed cause of Ben's death.", "Ben's estate could recover because the drowning was due to the negligence of the boat owner.", "The Abel Steamship's failure to provide a lifeboat was a substantial factor in Ben's death but there was a superseding cause."], "ans": 0, "exp": "Violating the lifeboat statute may make the company negligent per se, but negligence per se only settles breach; the plaintiff must still prove causation. Ask the but-for question: but for the missing lifeboat, would Ben have lived? No, because the sea was so heavy that a lifeboat could not have been launched, so he would have drowned anyway. The option saying the company is the presumed cause is wrong because a statutory violation does not presume causation. The option saying the estate recovers because of the owner's negligence is wrong because negligence without but-for causation is not enough. The option about a substantial factor and a superseding cause is wrong because the missing lifeboat made no difference at all, and the storm is a condition, not an intervening act that cuts off liability."}, {"id": "imp_torts_pn7", "unit": "T8", "course": "Torts", "diff": 3, "q": "Pedro sues Dino after Dino injures him in a car wreck. The jury calculates Pedro's total damages at $10,000 but also finds that Pedro's negligence was 70% to blame for the accident and Dino's negligence was only 30% to blame. The case is tried in a jurisdiction that follows the modified 50/50 form of modified comparative negligence.\n\nAs a consequence:", "opts": ["Pedro is liable to Dino for $5,000.", "Dino is liable to Pedro for $7,000.", "Dino is liable to Pedro for nothing.", "Dino is liable to Pedro for $3,000."], "ans": 2, "exp": "Under either modified form (no greater than, or not equal to or greater than), a plaintiff whose fault exceeds the defendant's recovers nothing. Pedro at 70% is greater than Dino at 30%, so he is barred. The $3,000 option is the pure comparative fault answer (30% of $10,000), the trap for students who forget the modified bar. The $7,000 option wrongly uses Pedro's own percentage. The option making Pedro liable to Dino for $5,000 is wrong because Dino has filed no counterclaim and no damages for Dino are in the facts; comparative fault reduces or bars the plaintiff's recovery, it does not create a judgment against him."}, {"id": "imp_torts_sd3", "unit": "T9", "course": "Torts", "diff": 3, "q": "Max shoves Lou aside in a crowded hallway. A healthy person would have been bruised, but Lou has brittle bones and suffers several fractures. In Lou's battery suit, Max is liable for:", "opts": ["All of Lou's damages, including the fractures, since the battery is established.", "The fractures only if Max knew of Lou's brittle bones, since the eggshell rule reaches only a known condition.", "Nothing, because Max did not intend fractures, and battery requires intent to harm.", "The bruise-level harm alone, what a reasonable person would suffer from the shove."], "ans": 0, "exp": "Eggshell plaintiff applies once the battery is established; the specific harm need not be intended."}, {"id": "imp_torts_pm1", "unit": "T1", "course": "Torts", "diff": 3, "q": "Felix drops a water balloon from his fifteenth-floor balcony, trying to hit his roommate Oscar as a joke. It just misses Oscar, bursts on the sidewalk, and sprays water on Murray, who is walking next to Oscar. In Murray's battery suit against Felix, Murray will:", "opts": ["Win, because Felix's tortious intent to batter Oscar is transferred to Murray.", "Lose, because Felix intended to hit Oscar, and not Murray, with the balloon.", "Lose, because Murray was not harmed by the water spraying on him.", "Lose, because there was less than a substantial certainty that Felix would hit anyone from the fifteenth floor."], "ans": 0, "exp": "Felix desired an offensive contact with Oscar, which is tortious intent; it transfers person to person to Murray. (C) fails because offensive contact is enough, no physical harm is required. (D) fails because desire satisfies intent on its own; low odds of hitting do not defeat desire (substantial certainty is only the second, alternative prong)."}, {"id": "imp_torts_mc28", "unit": "T2", "course": "Torts", "diff": 3, "q": "A dog owner's large dog repeatedly digs up her neighbor's garden after getting off-leash. Furious after the third time, once the dog has left the garden, the neighbor throws a rock at the dog, hitting its leg. The dog owner screams that she'll \"let him loose\" on the neighbor next time, and two days later, while the neighbor is fixing his fence, she releases the dog toward him and it bites him badly enough to require stitches. Which statement best describes the likely liability here?", "opts": ["The neighbor is liable for battery for hitting the dog, and the dog owner's release of the dog is likely privileged as defense of property, since the neighbor had already injured her dog and an owner may use reasonable force to keep that harm from recurring.", "The neighbor is liable for trespass to chattels for hitting the dog (assuming some resulting harm), and the dog owner is liable for battery via the dog attack, since the advance threat and two-day delay show retaliation rather than a spontaneous defensive response, which defeats any privilege.", "Neither party is liable, since each was defending a property interest of their own: the neighbor was protecting a garden the dog had dug up three times, and the dog owner was protecting a dog the neighbor had already injured, so each act was likely privileged.", "The dog owner is liable for false imprisonment, since the neighbor could not safely leave his own yard once the dog was released, and a threat of force that keeps a person from moving freely is a confinement even without walls, so the bite just adds to the damages for that confinement."], "ans": 1, "exp": "Throwing the rock is an intentional interference with the owner's personal property (the dog), a trespass to chattels once some resulting harm is shown. The dog attack two days later, after an explicit advance threat, reads as planned retaliation, not a response to an ongoing or imminent threat. Privileges like self-defense or defense of property protect only a response to a present danger, not payback for a completed wrong. The advance announcement and the delay are exactly the facts that defeat a privilege claim, just as announcing an attack in advance undercuts a self-defense argument. False imprisonment doesn't fit at all: the neighbor was attacked, not confined."}, {"id": "imp_torts_sv16", "unit": "T3", "course": "Torts", "diff": 3, "q": "Same essay. Spanky slips on old, refrozen ice on Alfalfa's driveway that had been there for three days before the morning's snow. Assuming the owners owed Spanky ordinary reasonable care, his negligence claim against them is:", "opts": ["Unchanged by the timing, because breach turns on how dangerous the ice was, not on how long it had been there.", "Barred, because Spanky was probably a trespasser, and owners owe no care to trespassers on it.", "Stronger, because the ice had been there long enough that reasonable owners would have removed it.", "Weaker than if the ice had formed that morning, because owners usually answer for fresh hazards alone."], "ans": 2, "exp": "Timing works this way: snow that started that morning may make not shoveling reasonable, while ice that sat for three days strengthens the claim."}, {"id": "imp_torts_au3m8", "unit": "T4", "course": "Torts", "diff": 3, "q": "A father knows that his 11-year-old son has hurt other children with objects before. He leaves a golf club in the backyard. The son swings it at a stone and hits a neighbor's child in the jaw. Which is the best analysis?", "opts": ["His prior knowledge likely makes him negligent for leaving the club, and the son may also be liable.", "No breach, because a golf club is an ordinary object, as in Lubitz v. Wells.", "The father is liable only if he intended the injury, because parents answer only for intent.", "Only the son can be liable, because the son, not the father, swung the club."], "ans": 0, "exp": "Without notice, Lubitz v. Wells holds that leaving a golf club out is not negligence. Notice changes the result: prior knowledge that the child injures others with objects creates a duty to remove the object or supervise. The father's liability rests on his own negligence, not on intent. A parent's own careless supervision supports a claim even though the son swung the club, and the son can be negligent separately."}, {"id": "imp_torts_hd-duty-1", "unit": "T5", "course": "Torts", "diff": 3, "q": "Felix buys paint at a hardware store. Looking for a restroom, he pushes through a door marked 'Employees Only,' believing it leads to the restroom. He falls down an unlit staircase that leads to the stockroom. No employee knew he had gone through the door. The stairway light had burned out a week earlier, and no one had replaced it. Felix sues the store. What duty did the store owe Felix on the staircase?", "opts": ["Reasonable care, because his honest belief that the door led to a restroom kept his entry innocent.", "Full reasonable care with inspection, because his purchase made him an invitee throughout the store.", "Only to avoid willful, wanton, or reckless conduct, because he was an undiscovered trespasser.", "Reasonable care, because whether he exceeded the scope of his invitation is a question for the jury."], "ans": 2, "exp": "Felix went beyond the scope of his invitation into an area marked as closed to him, so he entered without consent and was a trespasser on the staircase. Because no one knew he was there, the store owed him only freedom from willful, wanton, or reckless conduct, so the burned-out light does not matter."}, {"id": "imp_torts_pn5", "unit": "T6", "course": "Torts", "diff": 3, "q": "When a tire of a motorist's car suffered a blowout, the car rolled over and the motorist was badly injured. Vehicles made by the manufacturer of the motorist's car have been found to be negligently designed, making them dangerously prone to rolling over when they suffer blowouts. A truck driver who was driving behind the motorist when the accident occurred stopped to help. Rescue vehicles promptly arrived, and the truck driver walked along the side of the road to return to his truck. As he approached his truck, he was struck and injured by a speeding car. The truck driver has sued the manufacturer of the injured motorist's car.\n\nIs the truck driver likely to prevail in a suit against the car manufacturer?", "opts": ["No, because the car manufacturer's negligence was not the proximate cause of the truck driver's injuries.", "No, because the truck driver was injured by the speeding car which supersedes any negligence by the manufacturer of the car.", "Yes, because it is foreseeable that injuries can result from rollovers.", "Yes, because the car manufacturer's negligence caused the dangerous situation that invited the rescue by the truck driver."], "ans": 3, "exp": "Rescue doctrine: danger invites rescue, so a rescuer is a foreseeable plaintiff. The manufacturer's negligent design created the danger that brought the truck driver to the roadside, and being hit by traffic while walking back is within the risks a roadside rescue creates. The option saying there is no proximate cause is wrong for that reason. The option calling the speeding car a superseding cause is wrong because negligent driving near an accident scene is a foreseeable intervening act; criminal or highly extraordinary acts are the ones that usually supersede. The option that injuries from rollovers are foreseeable states a true fact but the wrong reason: the truck driver was not hurt in a rollover, and his claim works only through the rescue doctrine."}, {"id": "imp_torts_xv40", "unit": "T8", "course": "Torts", "diff": 3, "q": "The defendant's warehouse lacked the sprinkler system a statute required, and a fire spread from it to the plaintiff's adjoining warehouse. The plaintiff had stacked open drums of fuel against the shared wall, which helped the fire spread. The jury finds the plaintiff's damages are $200,000 and assigns 20% of the fault to the plaintiff and 80% to the defendant. The case is tried in Massachusetts.\n\nAs a consequence:", "opts": ["The defendant is liable to the plaintiff for $200,000, because the defendant was negligent per se.", "The defendant is liable to the plaintiff for nothing, because the plaintiff was contributorily negligent.", "The defendant is liable to the plaintiff for $160,000.", "The defendant is liable to the plaintiff for $40,000."], "ans": 2, "exp": "Negligence per se sets the defendant's breach, but it does not wipe out the plaintiff's own fault. Massachusetts follows modified comparative fault (c. 231 s. 85): a plaintiff whose negligence is not greater than the defendant's recovers, reduced by her percentage. 20% is not greater than 80%, so she recovers 80% of $200,000, which is $160,000. The full $200,000 option ignores her fault. The nothing option is the old contributory negligence rule. The $40,000 option applies the plaintiff's percentage instead of the defendant's."}, {"id": "imp_torts_sv3", "unit": "T9", "course": "Torts", "diff": 3, "q": "Same essay. A healthy person hit by the snowball would have been mildly annoyed; Robert, because of his illness, suffers serious emotional distress. If Spanky is liable for battery, he pays for:", "opts": ["Nothing, because the snowball was not aimed at Robert in the first place.", "Nominal damages alone, because emotional distress is not physical injury.", "All of Robert's distress, including the part caused by his illness.", "The annoyance an ordinary person would feel from a snowball hit."], "ans": 2, "exp": "Eggshell plaintiff: once the tort exists, the defendant takes the plaintiff as he finds him."}, {"id": "imp_torts_pm2", "unit": "T1", "course": "Torts", "diff": 3, "q": "Same facts. Hearing the balloon burst, Oscar, startled, jumps back into the street and is struck by a car driven negligently by Myrna. In Oscar's suit against Felix, he would probably:", "opts": ["Win, but only for the fright of the balloon bursting and not for his injuries from the collision.", "Lose, since Felix did not intend to have Oscar hit by a car.", "Win, for all of his injuries.", "Lose, since Felix's intent to batter Oscar was never actualized."], "ans": 2, "exp": "The best answer is C: once the intentional tort is established, the defendant pays for the resulting harm that was foreseeable, and foreseeability is read broadly (it does not mean likely or substantially certain). A third party's later negligence, here Myrna's careless driving, is foreseeable, and but for the assault Oscar would not have jumped into the street. The step the answer assumes is that the near miss and burst gave Oscar apprehension of an imminent contact (water spraying beside him), which completes an assault."}, {"id": "imp_torts_pm4", "unit": "T2", "course": "Torts", "diff": 3, "q": "Corsetti, riding an ATV, is charged by a bear and swerves into Farmer Jones's six-foot cornfield to shake it, causing $200 in crop damage. Corsetti is:", "opts": ["Not liable, because he acted to prevent a much greater harm.", "Liable, because he had no privilege to harm the crop.", "Not liable, because he did not act for the purpose of harming the crop.", "Privileged to act as he did, but liable for the damage anyway."], "ans": 3, "exp": "Private necessity is an incomplete privilege: the entry itself is privileged (the farmer could not lawfully expel him), but he must pay for the harm he causes (Vincent v. Lake Erie). (C) fails because trespass needs only intent to enter, which he had."}, {"id": "imp_torts_hv29", "unit": "T3", "course": "Torts", "diff": 3, "q": "A rink keeps an unpadded concrete wall that padding could cover for a few hundred dollars; a nine-year-old skater hits it and suffers a head injury. The manager says nothing similar happened in 17 years. Under the Hand formula:", "opts": ["Likely no negligence: P is low, and a low probability defeats breach.", "Likely no negligence: 17 years without a similar accident shows the rink met the standard of care.", "Likely negligence: very high L and very low B can outweigh a low P.", "No negligence: children assume the risk of hazards at a rink."], "ans": 2, "exp": "Carroll Towing, B < PL: a grave harm and a cheap precaution can outweigh a low probability."}, {"id": "imp_torts_au3m10", "unit": "T4", "course": "Torts", "diff": 3, "q": "A swimmer begins to drown in a guarded swimming area. A bystander who could throw a nearby life ring at no risk to himself does nothing. The lifeguard on duty also does nothing. Which statement is correct?", "opts": ["Both are negligent, because an easy rescue at no risk to the rescuer creates a duty to act.", "The bystander owes no duty, but the lifeguard's special relationship creates one.", "Neither owes a duty, because there is no duty to rescue, whatever the person's job may be.", "Only the bystander owes a duty, because only he could rescue the swimmer in complete safety."], "ans": 1, "exp": "A stranger has no legal duty to rescue, even an easy rescue, absent a special relationship or an undertaking. A lifeguard and swimmers are the standard special relationship, so the lifeguard owes a duty to act. The ease or safety of the rescue does not create a duty. The no-duty rule has exceptions."}, {"id": "imp_torts_hd-duty-2", "unit": "T5", "course": "Torts", "diff": 3, "q": "Ottoline owns a rural parcel with a deep, spring-fed natural pond. She knows that neighborhood children often cut across the parcel and swim there. She also knows that the steep bottom makes the pond dangerous to young children. Fencing the pond would cost little. One day eight-year-old Rhys trespasses, wades in, and drowns. His parents sue Ottoline under the child trespasser rule. What is the most likely result?", "opts": ["Liable, because an eight-year-old cannot appreciate the danger of a steep pond bottom.", "Liable, because as a known trespasser Rhys was owed a warning of the pond's hidden danger.", "Liable, because she knew children trespassed there and fencing the pond would have cost little.", "Not liable, because the child trespasser rule covers only artificial conditions."], "ans": 3, "exp": "The spring-fed pond is a natural condition. The child trespasser rule requires an artificial condition, and the possessor owes trespassers no duty about natural conditions."}, {"id": "imp_torts_xv12", "unit": "T6", "course": "Torts", "diff": 3, "q": "Abel Steamship Company's crew negligently lashed the lifeboats so tightly that launching them took twenty minutes instead of two. Ben, a sailor, fell overboard at night in moderate seas. No one saw him go in, and there is no evidence how long he stayed afloat.\n\nIn a suit by Ben's estate, the estate will most likely:", "opts": ["Win, because the improper lashing was negligent and Ben drowned while the boats were freed.", "Win, because the twenty-minute launching delay was a substantial factor in his death.", "Lose, because it cannot show that properly lashed boats would have reached Ben while he was alive.", "Lose, because the darkness and the moderate seas were a superseding cause of his death."], "ans": 2, "exp": "This is the lifeboat hypothetical: the plaintiff loses because there is no evidence how long the sailor was alive and able to be rescued, so the estate cannot prove more likely than not that a faster launch would have saved him. Negligence plus a death is not enough without but-for causation. Calling the delay a substantial factor assumes the very causation that is missing. Darkness is a condition, not an intervening act, so it supersedes nothing."}, {"id": "imp_torts_xv61", "unit": "T8", "course": "Torts", "diff": 3, "q": "Pedro sues Dino after a car wreck. The jury finds Pedro's damages are $10,000, Pedro 70% at fault, and Dino 30% at fault. The case is tried in a pure comparative fault jurisdiction.\n\nAs a consequence:", "opts": ["Dino is liable to Pedro for $3,000.", "Dino is liable to Pedro for nothing.", "Dino is liable to Pedro for $7,000.", "Pedro is liable to Dino for $4,000."], "ans": 0, "exp": "Under pure comparative fault the plaintiff recovers the percentage of fault attributed to the defendant even if his own fault is greater (a plaintiff 60% at fault still recovers 40%). Pedro gets 30% of $10,000, or $3,000. Nothing is the modified result. $7,000 wrongly uses Pedro's own percentage. Pedro owes Dino nothing on Pedro's claim; Dino would need his own counterclaim and damages."}, {"id": "imp_torts_xv99", "unit": "T9", "course": "Torts", "diff": 3, "q": "Bo was injured in a car accident caused by Cy. Bo seeks $12,000 in hospital bills, $8,000 in lost wages, and $50,000 for pain and suffering.\n\nWhich of these are special damages?", "opts": ["The pain and suffering, because it is the largest item.", "The hospital bills and the lost wages.", "All three items.", "None, because special damages are only punitive damages."], "ans": 1, "exp": "Special damages are losses that are monetary in nature: lost wages, medical bills, home care. General damages are emotional, such as pain and suffering, embarrassment and shame. Punitive damages are a separate category."}, {"id": "imp_torts_pm3", "unit": "T1", "course": "Torts", "diff": 3, "q": "Caitlin taps a stranger on the shoulder to ask for directions. The stranger, due to a mental illness, recoils in anger at the touching. In the stranger's battery action against Caitlin, he will probably:", "opts": ["Recover, because Caitlin deliberately caused an offensive contact.", "Recover, because Caitlin intentionally caused contact, and the stranger found it offensive.", "Lose, because Caitlin would not expect the stranger to find this contact offensive.", "Lose, because even though the contact was offensive, the stranger implicitly consented to it."], "ans": 2, "exp": "Offensiveness is judged by a person of ordinary sensitivity; a tap to ask directions is socially acceptable, so it is not offensive and there is no battery. The known-sensitivity exception applies only if Caitlin knew of the condition and tapped anyway. (D) concedes the contact was offensive, which is the wrong premise, and (B) uses the plaintiff's subjective reaction, which is not the test."}, {"id": "imp_torts_sd6", "unit": "T2", "course": "Torts", "diff": 3, "q": "Rick, annoyed that teenager Sasha stepped onto his lawn to get a ball, orders his trained dog to bite her. Sasha threatens no one. In Sasha's battery suit, Rick will probably:", "opts": ["Win, because Sasha was trespassing, and an owner may generally use his animal to make a trespasser leave.", "Lose, but only because Sasha was a minor, since an owner may use his dog to drive off an adult trespasser.", "Lose, because force likely to cause serious bodily injury is not privileged merely to protect property.", "Win, because defense of property allows the force that is needed to remove a trespasser at once."], "ans": 2, "exp": "Katko v. Briney: force likely to cause serious bodily harm is not privileged merely to protect property, and Sasha threatens no one."}, {"id": "imp_torts_hv30", "unit": "T3", "course": "Torts", "diff": 3, "q": "After nine beers a driver travels in his lane under the speed limit; a child is thrown from a truck directly in front of him, and even a sober driver could not have stopped. Negligence?", "opts": ["Yes, because drunk driving is negligent, and that alone makes him liable now.", "No: breach without causation is not negligence; the impairment did not contribute.", "Yes, because drunk driving violates a statute, which makes him negligent per se and presumes causation.", "No, because the child was probably not foreseeable, and no duty is owed to such a child."], "ans": 1, "exp": "Breach without causation is not negligence: even a sober driver could not have stopped, so the impairment was not a but-for cause of the harm."}, {"id": "imp_crim_mc1", "unit": "Cr1", "course": "Crim", "diff": 3, "q": "A judge sentences a first-time shoplifter to a weekend in jail so that this particular defendant will think twice before stealing again. Which purpose of punishment is the judge invoking?", "opts": ["Specific deterrence.", "Temporary incapacitation.", "Proportionate retribution.", "General deterrence."], "ans": 0, "exp": "Specific deterrence punishes the defendant so that he will not reoffend. General deterrence aims at others; incapacitation prevents crime by physical confinement, which is not the judge's stated aim; retribution looks backward to proportionate desert, not to the defendant's future conduct."}, {"id": "imp_crim_mc10", "unit": "Cr2", "course": "Crim", "diff": 3, "q": "Which of the following is a voluntary act under the Model Penal Code?", "opts": ["Kicking a nurse during an epileptic seizure in the hospital waiting room.", "Driving to the wrong destination out of habit while daydreaming.", "Signing a check while carrying out a suggestion made under hypnosis.", "Falling onto a child at the pool after being shoved by a stranger."], "ans": 1, "exp": "A voluntary act is a willed movement, and habit or inadvertence still counts so long as the person could have acted differently. Seizures and conduct under hypnosis are on the Code's list of movements that are not voluntary, and being pushed is the recognized example of an involuntary movement."}, {"id": "imp_crim_mc24", "unit": "Cr3", "course": "Crim", "diff": 3, "q": "A kidnapping victim leaps from the moving car and is seriously injured. Is the kidnapper the proximate cause of the injury?", "opts": ["No, because the kidnapper did not physically inflict the injury the victim suffered.", "Yes, but only under the Model Penal Code, because it replaces the common law foreseeability test.", "No, because the victim's free and deliberate choice to jump is an independent intervening cause.", "Yes, because escape is a foreseeable response to the peril, so the leap is a dependent cause."], "ans": 3, "exp": "Human responses to danger, such as escape, rescue, and police pursuit, are foreseeable and so are dependent intervening causes. Direct infliction is not required, and the rule is the same at common law and under the Code's too-remote-or-accidental test."}, {"id": "imp_crim_mc52", "unit": "Cr4", "course": "Crim", "diff": 3, "q": "A woman spat upon at close range by a man who had just threatened to shoot her spits back and is charged with assault. The trial judge found her fear reasonable but convicted because her motive was 'street justice.' Why was that reversed?", "opts": ["Because she had no duty to retreat before using nondeadly force against a man who threatened her.", "Because the man was the initial aggressor, which settled the self-defense claim in her favor.", "Because spitting is too slight a touching to count as any kind of assault at all.", "Because once reasonable belief was shown, motive was irrelevant and spitting back was not excessive."], "ans": 3, "exp": "Self-defense claims rise or fall on reasonable belief in imminent danger and excessive force. Motive is already accounted for in the excessive force question. Retreat was not the ground of decision. The concurrence added that force cannot be unreasonable for being too weak."}, {"id": "imp_crim_mc61", "unit": "Cr5", "course": "Crim", "diff": 3, "q": "Hikers caught in a snowstorm who will otherwise freeze break into an abandoned cabin. How does their necessity defense fare?", "opts": ["Very compelling, because a minor crime averted death and no alternative would have worked.", "Weak, because necessity excuses only acts done under a threat that another person has made.", "Weak, because the harms are equal: their safety weighed against the owner's property.", "Strong only under the Code, because the common law requires a danger that a person has caused."], "ans": 0, "exp": "This is the classic necessity case: a threat of imminent injury, no reasonable alternative, conduct that prevents a greater harm, and conditions not of their own making. The law values lives far above property, so the balance is plainly positive. A natural threat is the paradigm source for common law necessity; a human threat is duress."}, {"id": "imp_crim_mc80", "unit": "Cr6", "course": "Crim", "diff": 3, "q": "A friend lends a baseball bat to a man who says he plans to smash a rival's windshield, and the man does so. Under a statute that requires the purpose of promoting or facilitating the offense, is the friend accountable for the property damage?", "opts": ["Yes, because he knew of the plan when he lent the bat, and knowing aid makes him accountable.", "No, because he was not present when the windshield was smashed with the bat.", "No, because lending a bat is lawful conduct that gives only minimal aid to the crime.", "Yes, if he lent it with purpose to promote or facilitate the smashing, because knowledge alone does not suffice."], "ans": 3, "exp": "Accomplice liability requires both the mens rea of the crime aided and the purpose to aid. Section 500, like the Model Penal Code, requires purpose, so knowledge alone falls short, though some courts accept knowledge for serious crimes. Presence is irrelevant, and lending a bat becomes criminal only through that purpose."}, {"id": "imp_crim_mc2", "unit": "Cr1", "course": "Crim", "diff": 3, "q": "Which statement best captures the retributivist position?", "opts": ["Punishment is justified because it deters this offender and others from committing future crimes, which is its only legitimate aim.", "Punishment is justified because wrongdoers morally deserve it in proportion to the wrong, and imposing it is intrinsically good.", "Punishment is justified because it expresses and reinforces the community's shared moral values.", "Punishment is justified because the crimes it prevents are worth more to society than its costs."], "ans": 1, "exp": "Retributivism (Kant) treats punishment as moral desert: proportionate punishment for a wrongful act is good without reference to consequences. The deterrence choice and the cost-benefit choice are utilitarian, and the shared-values choice is expressivism (Durkheim)."}, {"id": "imp_crim_mc11", "unit": "Cr2", "course": "Crim", "diff": 3, "q": "A lifeguard on duty watches a swimmer drown and laughs. A bystander on the same beach does the same. Who may be prosecuted for the omission?", "opts": ["Both, because each could have rescued safely, and laughing shows a culpable mental state.", "Neither, because an omission satisfies the actus reus only when a statute names the duty.", "The lifeguard only, because his contract creates a legal duty to act that the bystander lacks.", "The bystander only, because the lifeguard's duty runs to his employer, not the swimmer."], "ans": 2, "exp": "There is no general duty to act. An omission satisfies the actus reus only where there is a legal duty and physical capability. Contract is a duty source alongside statute, status, voluntary assumption, and creating the peril, so a statute is not required; being a bystander is not a source, and moral duty alone never suffices."}, {"id": "imp_crim_mc26", "unit": "Cr3", "course": "Crim", "diff": 3, "q": "Under the Model Penal Code, if the actual result differs from the result purposed only in that a different person was harmed, what is the consequence?", "opts": ["Causation turns on whether the jury finds the different victim too remote from the plan.", "Causation is established; this is the Code's version of transferred intent.", "The actor is liable only for recklessness as to the person his conduct actually harmed.", "Purpose transfers only if the actor knew the other person was present."], "ans": 1, "exp": "Section 2.03(2)(a) treats a result that differs only in the person or property harmed as within the actor's purpose. That is how the Code handles transferred intent, as a causation question rather than a fiction. No remoteness finding, downgrade to recklessness, or awareness of the other person is required."}, {"id": "imp_crim_mc53", "unit": "Cr4", "course": "Crim", "diff": 3, "q": "What are the two steps of a self-defense analysis?", "opts": ["Did she actually and reasonably fear imminent bodily harm; if so, was her force necessary and proportionate.", "Did she honestly believe she faced imminent harm; if so, was her force the least force that was possible.", "Did she reasonably believe she faced harm at some future point; if so, was her force proportionate to it.", "Did she reasonably believe she faced imminent harm; if so, did she first retreat when she safely could."], "ans": 0, "exp": "Step one is the predicate belief (actual and reasonable, imminent, bodily harm); step two is the lawfulness of the response, necessary and proportionate rather than excessive. An honest belief alone is not enough, a future threat is not imminent, the law does not demand the least possible force, and retreat is a limitation, not one of the two steps. Deadly force requires a threat of death or serious bodily harm; lesser threats justify only nondeadly force."}, {"id": "imp_crim_mc62", "unit": "Cr5", "course": "Crim", "diff": 3, "q": "Which of the following correctly states a difference between common law necessity and the Model Penal Code's choice of evils defense?", "opts": ["The common law accepts equal harms; the Model Penal Code requires that the harm avoided be the greater one.", "The common law requires a clear and imminent danger; the Model Penal Code has no imminence requirement.", "The common law allows the defense in homicide; the Model Penal Code bars it in every killing.", "The Model Penal Code requires a natural source of threat; the common law allows human threats."], "ans": 1, "exp": "The Model Penal Code drops imminence, drops the natural-versus-human distinction, and allows the defense in homicide where the net result saves lives. Both systems require the harm avoided to be greater than the harm caused or the harm the law seeks to prevent; at common law equal harms give no defense."}, {"id": "imp_crim_mc82", "unit": "Cr6", "course": "Crim", "diff": 3, "q": "A woman who receives a stolen tree from a thief she hired intends to keep it forever. A statute punishes a person who purposely receives, retains, or conceals property of another, knowing that it has been stolen, unless the property is received, retained, or concealed with the purpose of restoring it to the owner. Which fact, if true instead, would defeat liability?", "opts": ["That she did not personally steal it but only received it from the thief.", "That she received it with the purpose of restoring it to the owner.", "That the thief she hired has not yet been convicted of the larceny.", "That she paid the thief a fair price for the tree when she received it."], "ans": 1, "exp": "Section 600(a) punishes purposely receiving, retaining, or concealing property known to be stolen, unless it is received with the purpose of restoring it to the owner. Payment is irrelevant, the thief's conviction is not required, and section 600(b) expressly reaches those accountable for the larceny."}, {"id": "imp_crim_mc3", "unit": "Cr1", "course": "Crim", "diff": 3, "q": "Incapacitation is said to be complicated by three effects. Which of the following is NOT one of them?", "opts": ["Postponement: most prisoners return home, so confinement only delays their crimes.", "Replacement: removing one offender opens a spot in the crime market for another.", "Rehabilitation: treatment inside prison eliminates the need to confine.", "Relocation: offenders keep committing crimes, now against people inside the prison."], "ans": 2, "exp": "The three effects are relocation, postponement, and replacement. Rehabilitation is a separate utilitarian theory, not a complication of incapacitation."}, {"id": "imp_crim_mc12", "unit": "Cr2", "course": "Crim", "diff": 3, "q": "A mother takes no steps to stop her boyfriend from beating her child, saying she was afraid of him too. Under the majority approach, what result on a charge based on her omission?", "opts": ["No liability, because the boyfriend's blows, not her omission, caused the child's injuries.", "No liability, because her fear for her own safety meant she was not physically capable of acting.", "Liability only if a statute imposes it, because a parent's duty to protect a child is purely statutory.", "Liability is possible, because as a parent she has a duty that her own fear does not erase."], "ans": 3, "exp": "The parent-child relationship creates a legal duty at common law without any special statute, and most courts impose liability on a parent who fails to protect a child from another's abuse despite the parent's own fear. Fear is not physical incapacity, and a failure to act on a duty can be a cause of harm that another person inflicts. The fear may matter to a duress argument but does not erase the duty."}, {"id": "imp_crim_mc27", "unit": "Cr3", "course": "Crim", "diff": 3, "q": "A defendant stabs a man who would otherwise have died within the hour from a wound inflicted earlier by someone else; the stab hastens death. Is the defendant a cause of death?", "opts": ["Yes, but only if the earlier wound would not have killed him, because otherwise the stab added nothing.", "No, because the victim would have died that hour anyway, so the stab was not a but-for cause.", "Yes, because hastening death even by moments causes it, as a concurrent cause.", "No, because the first assailant's mortal wound already made him the legal cause of death."], "ans": 2, "exp": "Most courts hold that a person who hastens an already-dying victim's death causes that death; both acts are effective in bringing it about. But for the stab, death would not have come when it did, so but-for cause is met, and the victim's prior mortal wound is no defense for either assailant."}, {"id": "imp_crim_mc54", "unit": "Cr4", "course": "Crim", "diff": 3, "q": "Who bears which burden on self-defense in the common law approach?", "opts": ["The prosecution bears both production and persuasion, disproving self-defense in every case from the start.", "The defendant bears production to get the instruction; then the prosecution must disprove it beyond reasonable doubt.", "The defendant bears production; then the judge alone decides whether the prosecution has disproved it.", "The defendant bears production and persuasion, proving self-defense by a preponderance of the evidence."], "ans": 1, "exp": "Production is on the defendant, and judges often deny the instruction, especially in battered spouse cases. Persuasion is on the prosecution. The threshold question in every case is whether the judge gives the instruction at all."}, {"id": "imp_crim_mc63", "unit": "Cr5", "course": "Crim", "diff": 3, "q": "Under the Model Penal Code, how does a defendant's own recklessness in creating the emergency affect a necessity claim?", "opts": ["It bars the defense entirely, as reckless placement does under the Code's own duress provision.", "It has no effect, as only an intentional creation of the emergency matters under the Code.", "It still defends purpose or knowledge crimes but allows conviction of a reckless or negligent crime.", "It shifts to him the burden of proving necessity by clear and convincing evidence at trial on the charge."], "ans": 2, "exp": "Unlike the Model Penal Code duress provision, which denies the defense to one who recklessly placed himself in the situation, section 3.02 preserves choice of evils for purposeful and knowing crimes while allowing prosecution for the reckless or negligent grade. Intentional creation bars the defense outright. Reckless or negligent creation leaves the defense in place for purpose and knowledge crimes but allows conviction of any offense for which recklessness or negligence suffices. The provision does not change the burden of proof."}, {"id": "imp_crim_mc230", "unit": "Cr6", "course": "Crim", "diff": 3, "q": "Agents hear that Lionel sells forged vehicle titles. He has two prior arrests for forgery but no convictions. An undercover agent posing as a used car dealer calls Lionel, says he heard Lionel has connections, and proposes they team up. Lionel agrees, arrives at the meeting with a stack of forged titles, and offers to sell them to a buyer who is also an agent. Charged in federal court with attempting to sell forged titles, Lionel claims entrapment. He will likely", "opts": ["win, because the agent suggested the deal.", "win, because he has never been convicted of forgery.", "win a due process dismissal, because the government built the crime from start to finish.", "lose, because he was predisposed and the agents only gave him an opportunity."], "ans": 3, "exp": "Federal courts use the subjective test: entrapment fails if the defendant was predisposed and the government merely offered the chance. Lionel's prior arrests, quick agreement, and the forged titles he brought show predisposition. The outrageous government conduct dismissal is rare and applies only when the government creates the crime from beginning to end."}, {"id": "imp_crim_mc4", "unit": "Cr1", "course": "Crim", "diff": 3, "q": "A defendant argues that a loveless childhood and a delusional preoccupation with racial injustice created an irresistible impulse that should excuse a killing. How does the law treat this 'rotten social background' theory?", "opts": ["It is a partial defense that reduces murder to manslaughter as adequate provocation.", "It negates the intent to kill, so the killing can be no more than voluntary manslaughter.", "It goes to the jury as a defense, with the historical context bearing on guilt.", "It is generally rejected as a defense, though social drivers matter at sentencing."], "ans": 3, "exp": "Criminal law individualizes culpability and treats social drivers as relevant to sentencing, not to guilt. The rotten social background theory is generally rejected. It is not adequate provocation (background and words are never adequate), it does not negate the intent to kill, and historical context may move a jury's sympathy but does not change the legal standard."}, {"id": "imp_crim_mc13", "unit": "Cr2", "course": "Crim", "diff": 3, "q": "A traveler is arrested at the border with heroin a smuggler secretly planted in his luggage. He never knew it was there. Under the majority view, can he be convicted of possession?", "opts": ["No, because most courts require awareness of the item, and unknowing possession is not a voluntary act.", "No, because possession is a status rather than an act, so it can never be punished.", "Yes, because drug possession is strict liability, so his lack of knowledge is legally irrelevant.", "Yes, because the bag was in his physical control and under his dominion when he reached the border crossing."], "ans": 0, "exp": "Possession is an act only if the person knowingly took the item or became aware of it and failed to end possession in a sufficient time. Unknowing possession fails the voluntary act requirement even for a strict liability offense, physical control without awareness is not enough, and possession is conduct, not a status."}, {"id": "imp_crim_mc28", "unit": "Cr3", "course": "Crim", "diff": 3, "q": "A robbery victim, left drunk and without his glasses beside a snowy highway, is struck and killed by a speeding truck. The robbers argue the speeding was a superseding cause. Why did the court disagree?", "opts": ["Because the robbers were the but-for cause of his being beside the highway that night.", "Because a superseding cause must be the sole cause of death, and the speeding was only one of several causes here.", "Because the robbers intended the death, so the manner in which it occurred did not matter.", "Because death was foreseeable from leaving an impaired man there, even if its manner was unusual, and speeding was common."], "ans": 3, "exp": "When the defendant creates a risk of a particular harm and it occurs in a somewhat different manner, the intervening cause is dependent unless the mechanism was entirely coincidental. Liability is not automatic for any death after a crime; foreseeability is the test. The robbers did not intend death."}, {"id": "imp_crim_mc55", "unit": "Cr4", "course": "Crim", "diff": 3, "q": "During a 1919 race riot, a Black man chased by a mob of a hundred reached a place of comparative safety in a back yard, then stepped back out to the front areaway and fired when the mob turned on him. Why did the court deny self-defense, and how should the holding be evaluated?", "opts": ["He was the initial aggressor by arming himself; the holding is sound doctrine.", "He used deadly force against a nondeadly mob; the holding is sound doctrine.", "He left a place of safety knowing his presence would cause trouble; the holding rests on white supremacy.", "He failed to retreat while he still safely could; the holding is sound doctrine on the duty to retreat."], "ans": 2, "exp": "This is the 'coming to the trouble' provocation limitation, not an initial aggressor, retreat, or proportionality holding. The court effectively treated the mob as the party with a right to be on the street. The decision rests on principles of white supremacy, yet D.C. courts still cite it."}, {"id": "imp_crim_mc64", "unit": "Cr5", "course": "Crim", "diff": 3, "q": "A drunk driver takes his girlfriend to the hospital for a head wound and claims necessity. A neighbor was home and a fire station stood about 100 yards away. Why was the instruction denied?", "opts": ["Because the head wound was not a clear and imminent danger to his girlfriend's life.", "Because driving drunk could not reasonably be expected to abate the danger she faced.", "Because the legislature has barred necessity as a defense to drunk driving.", "Because he made no effort to seek help, and lawful alternatives were plainly available."], "ans": 3, "exp": "The no-effective-legal-alternative element requires that the defendant look into lawful options or show they would have been futile. Obvious nearby alternatives defeat the claim at the threshold. The court decided the case on alternatives alone: the danger from the head wound was arguably clear and imminent, whether driving would abate it was debatable, and no legislative bar was the ground."}, {"id": "imp_crim_mc231", "unit": "Cr6", "course": "Crim", "diff": 3, "q": "Hedda, a former pharmacist, served a sentence years ago for selling prescription pills and has been clean since. Undercover agents visit her for weeks, begging her to get oxycodone for their mother, who they say is dying in agony after insurance denied her medication. When Hedda refuses, they say they will tell her church she let a dying woman suffer. Hedda finally obtains the pills and is arrested. In a jurisdiction using the objective test for entrapment, does Hedda have a defense?", "opts": ["Yes, because the agents' tactics would likely have pushed an ordinary law-abiding person into the crime.", "No, because her prior conviction shows she was predisposed.", "No, because a person who has committed the same crime before cannot be entrapped by any government agent.", "Yes, because the agents approached her first."], "ans": 0, "exp": "The objective test asks whether the government's conduct would likely lead a normally law-abiding person to offend. Weeks of pleading, appeals to sympathy for a dying mother, and threats to shame her are the kind of pressure that test condemns. Under the subjective test her history would hurt her, but here the focus is on the agents."}
@@ -1391,7 +1430,7 @@ const SCHEDULE_DAYS = [
   },
   { date: "2026-12-08", label: "Tue, Dec 8 (3 Days to Crim Law)", note: "Full Crim Law exam mode (MCQs + Essays + Cheat Sheet) + 1 Contracts block.",
     blocks: [
-      { id: "b_1208_1", course: "Crim", unit: "Cr3", mode: "EXAM MODE: Mixed MCQs", task: "Crim Law Exam-Level MCQs (Cody Format: 40% MCQ Weight)" },
+      { id: "b_1208_1", course: "Crim", unit: "Cr3", mode: "EXAM MODE: Mixed MCQs", task: "Crim Law Exam-Level MCQs ( Format: 40% MCQ Weight)" },
       { id: "b_1208_2", course: "Crim", unit: "Cr4", mode: "EXAM MODE: Timed Essay", task: "Timed Crim Law Essay #2 (Self-Defense, Retreat, Felony Murder)" },
       { id: "b_1208_3", course: "Crim", unit: "Cr6", mode: "EXAM MODE: Timed Essay", task: "Timed Crim Law Essay #3 (Attempt, Conspiracy, Complicity, Entrapment)" },
       { id: "b_1208_4", course: "Crim", unit: "Cr5", mode: "EXAM MODE: Cheat Sheet", task: "Test-Drive 1-Page Cheat Sheet on Practice Hypo" },
@@ -1445,7 +1484,7 @@ const SCHEDULE_DAYS = [
     blocks: [
       { id: "b_1215_1", course: "LPS", unit: "L4", mode: "EXAM MODE: Timed Memo", task: "Full Timed Closed-Universe LPS Practice Memo — Reading & Outlining" },
       { id: "b_1215_2", course: "LPS", unit: "L3", mode: "EXAM MODE: Timed Memo", task: "Full Timed Closed-Universe LPS Practice Memo — Writing CREAC + Counterarguments" },
-      { id: "b_1215_3", course: "LPS", unit: "L4", mode: "EXAM MODE: Rubric Audit", task: "Grade Practice Memo Against Prof. Kim's Rubric & Citation Checklist" }
+      { id: "b_1215_3", course: "LPS", unit: "L4", mode: "EXAM MODE: Rubric Audit", task: "Grade Practice Memo Against Predictive Memo Rubric & Citation Checklist" }
     ]
   },
   { date: "2026-12-16", label: "Wed, Dec 16 (Day Before LPS — Final Rehearsal)", note: "Light timed issue/CREAC rehearsal + early rest before Dec 17 LPS final.",
@@ -2417,7 +2456,7 @@ function runLpsMechanicalAudit() {
   if (!ed || !out) return;
   const txt = ed.value;
   const flags = [];
-  if (/^\s*(?:III?\.?\s*)?FACTS\b/im.test(txt)) flags.push("❌ Line 13/14 Error: 'FACTS' heading detected — Prof. Kim's final format has NO Facts section.");
+  if (/^\s*(?:III?\.?\s*)?FACTS\b/im.test(txt)) flags.push("❌ Line 13/14 Error: 'FACTS' heading detected — Predictive Memo final format has NO Facts section.");
   if (/^\s*(?:IV|V)?\.?\s*CONCLUSION\b/im.test(txt)) flags.push("❌ Line 12/13 Error: Standalone 'CONCLUSION' heading detected — omit unless instructions specifically ask for one.");
   const hedges = txt.match(/\b(could|plausibly|potentially|could be inclined)\b/gi);
   if (hedges) flags.push(`⚠️ Named Error #12 (Hedged Prediction): Found ${[...new Set(hedges.map(h=>h.toLowerCase()))].join(", ")} — replace with "will likely".`);
@@ -2631,5 +2670,319 @@ function renderAll() {
 
 renderAll();
 </script>
+
+<script>
+(function hydratePhase1() {
+  if (!window.PHASE1_DATA) return;
+  const pUnits = window.PHASE1_DATA.units || [];
+  const pMcqs = window.PHASE1_DATA.mcqs || [];
+
+  if (pUnits.length && Array.isArray(window.SYLLABUS_UNITS)) {
+    window.SYLLABUS_UNITS.length = 0;
+    pUnits.forEach(u => {
+      const firstSec = (u.sections && u.sections[0]) || {};
+      window.SYLLABUS_UNITS.push({
+        ...u,
+        code: u.id,
+        trigger: (u.signals && u.signals[0]) || ("Concept Focus: " + (firstSec.heading || u.title)),
+        rule: firstSec.rule || "",
+        trap: (u.traps && u.traps[0]) || "Apply every element step-by-step."
+      });
+    });
+  }
+
+  if (pMcqs.length && Array.isArray(window.MCQ_BANK)) {
+    window.MCQ_BANK.length = 0;
+    pMcqs.forEach(q => window.MCQ_BANK.push(q));
+  }
+
+  // Re-order default queue so priority units (T2 IIED, Cr1 Actus/Mens Rea, Co3 Consideration, Co4 Promissory Estoppel) lead
+  if (Array.isArray(window.SCHEDULE_DAYS) && window.SCHEDULE_DAYS.length > 0) {
+    window.SCHEDULE_DAYS[0].blocks = [
+      { id: "b_p1_1", course: "Torts", unit: "T2", mode: "Deep Lesson + Unit Drill", task: "Unit 2: Intentional Infliction of Emotional Distress (IIED) — Outrageousness, Recklessness & Severe Distress" },
+      { id: "b_p1_2", course: "Contracts", unit: "Co3", mode: "Deep Lesson + Verbatim Rules", task: "Unit 3: Consideration — Bargain (§ 71), Pre-Existing Duty (§ 73), Modifications (§ 89 & UCC § 2-209(1))" },
+      { id: "b_p1_3", course: "Contracts", unit: "Co4", mode: "Deep Lesson + Unit Drill", task: "Unit 4: Promissory Estoppel (§ 90) & Pre-Acceptance Reliance (§ 87(2))" },
+      { id: "b_p1_4", course: "Criminal Law", unit: "Cr1", mode: "Deep Lesson + Unit Drill", task: "Unit 1: Actus Reus, Omissions & Mens Rea (Common Law vs. MPC § 2.02)" },
+      { id: "b_p1_5", course: "Legal Practice Skills", unit: "L2", mode: "CREAC Lab + Drill", task: "Unit 2: Small-Scale CREAC Containers, Rule Synthesis & FHR Case Explanations" }
+    ];
+  }
+
+  // Override openWorkspaceForUnit to render the full 4-Part Deep Professor-Style Lesson + Flowchart + Verbatim Trainer + Unit Drills + CREAC
+  window.flowStepIdx = 0;
+  window.flowOutcome = "";
+  window.clozeLevel = 0;
+
+  window.advanceFlow = function(ans) {
+    const u = SYLLABUS_UNITS.find(x => x.id === state.activeUnitId);
+    if (!u || !u.flowchart) return;
+    const step = u.flowchart.steps[window.flowStepIdx];
+    const next = ans === "yes" ? step.yes : step.no;
+    if (typeof next === "number") {
+      window.flowStepIdx = next;
+      window.flowOutcome = "";
+    } else {
+      window.flowOutcome = next;
+    }
+    renderDeepUnit(u);
+  };
+
+  window.resetFlow = function() {
+    window.flowStepIdx = 0;
+    window.flowOutcome = "";
+    const u = SYLLABUS_UNITS.find(x => x.id === state.activeUnitId);
+    if (u) renderDeepUnit(u);
+  };
+
+  window.setClozeLevel = function(lvl) {
+    window.clozeLevel = lvl;
+    const u = SYLLABUS_UNITS.find(x => x.id === state.activeUnitId);
+    if (u) renderDeepUnit(u);
+  };
+
+  function maskText(txt, pct) {
+    if (!pct) return txt;
+    return txt.split(" ").map((w, i) => {
+      if (w.length <= 3) return w;
+      const mod = pct === 25 ? 4 : (pct === 50 ? 2 : 1);
+      if (pct === 100 || i % mod === 0) return "______";
+      return w;
+    }).join(" ");
+  }
+
+  window.renderDeepUnit = function(unit) {
+    const box = document.getElementById("ws-rule-content");
+    if (!box) return;
+    const unitQCount = MCQ_BANK.filter(q => q.unit === unit.id).length;
+
+    const part1Sections = (unit.sections || []).map((sec, idx) => `
+      <div style="padding:12px 14px; border:1px solid var(--border); border-radius:10px; background:var(--surface); margin-bottom:10px;">
+        <div style="font-weight:700; font-size:15px; color:var(--accent); margin-bottom:6px;">${idx + 1}. ${sec.heading}</div>
+        ${sec.plain ? `<div style="font-size:13.5px; margin-bottom:8px; line-height:1.55;"><strong>In Plain Terms:</strong> ${sec.plain}</div>` : ""}
+        ${sec.rule ? `<div class="rule-box" style="margin:6px 0;"><strong>Controlling Black-Letter Rule:</strong> ${sec.rule}</div>` : ""}
+        ${sec.whyExam ? `<div style="font-size:12.5px; color:var(--muted); margin-top:6px;"><strong>Why It Matters on the Exam:</strong> ${sec.whyExam}</div>` : ""}
+      </div>
+    `).join("");
+
+    const starredHtml = (unit.starredRules && unit.starredRules.length) ? `
+      <div style="padding:14px; border:2px solid var(--accent); border-radius:10px; background:var(--surface); margin:12px 0;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:10px;">
+          <strong style="font-size:14px;">★ Verbatim Rules to Memorize ([NAME ON EXAM])</strong>
+          <div style="display:flex; gap:5px; flex-wrap:wrap;">
+            <button class="btn-sm ${window.clozeLevel===0?'active-filter':''}" onclick="setClozeLevel(0)">Full Text</button>
+            <button class="btn-sm ${window.clozeLevel===25?'active-filter':''}" onclick="setClozeLevel(25)">25% Blank</button>
+            <button class="btn-sm ${window.clozeLevel===50?'active-filter':''}" onclick="setClozeLevel(50)">50% Blank</button>
+            <button class="btn-sm ${window.clozeLevel===100?'active-filter':''}" onclick="setClozeLevel(100)">100% Blank</button>
+          </div>
+        </div>
+        ${unit.starredRules.map(sr => `
+          <div style="padding:10px; border-left:4px solid var(--accent); background:var(--surface-2); border-radius:6px; margin-bottom:8px;">
+            <div style="font-size:12px; font-weight:700; color:var(--accent);">${sr.citation} — ${sr.name}</div>
+            <div style="font-size:13.5px; margin-top:4px; line-height:1.55; font-style:italic;">"${maskText(sr.text, window.clozeLevel)}"</div>
+          </div>
+        `).join("")}
+      </div>` : "";
+
+    let flowHtml = "";
+    if (unit.flowchart && unit.flowchart.steps && unit.flowchart.steps.length) {
+      const curStep = unit.flowchart.steps[window.flowStepIdx] || unit.flowchart.steps[0];
+      flowHtml = `
+        <div style="padding:14px; border:1px solid var(--border); border-radius:10px; background:var(--surface-2); margin:12px 0;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <strong style="font-size:14px;">🧭 Interactive Decision Flowchart: ${unit.flowchart.title}</strong>
+            <button class="btn-sm" onclick="resetFlow()">Restart Tree</button>
+          </div>
+          <div style="padding:12px; background:var(--surface); border-radius:8px; border:1px solid var(--border);">
+            <div style="font-size:11px; font-weight:700; color:var(--muted); margin-bottom:4px;">STEP ${window.flowStepIdx + 1} OF ${unit.flowchart.steps.length}</div>
+            <div style="font-size:14px; font-weight:600; margin-bottom:10px;">${curStep.q}</div>
+            <div style="display:flex; gap:8px;">
+              <button class="btn-primary" onclick="advanceFlow('yes')">Yes →</button>
+              <button class="btn-ghost" onclick="advanceFlow('no')">No →</button>
+            </div>
+            ${window.flowOutcome ? `<div class="trigger-box" style="margin-top:10px;"><strong>Result:</strong> ${window.flowOutcome}</div>` : ""}
+          </div>
+        </div>`;
+    }
+
+    const part2Html = `
+      <div style="margin-top:14px;">
+        <h4 style="margin:0 0 8px 0; font-size:15px;">Part 2 — Practical Examples, Cases &amp; Exam Signals ("Spot It")</h4>
+        ${(unit.cases || []).map(c => `<div class="rule-box" style="margin:6px 0;">${c}</div>`).join("")}
+        ${(unit.signals || []).map(sig => `<div class="trigger-box" style="margin:6px 0;">⚡ ${sig}</div>`).join("")}
+        ${(unit.traps || []).map(tr => `<div class="trap-box" style="margin:6px 0;">⚠️ <strong>Exam Trap:</strong> ${tr}</div>`).join("")}
+      </div>`;
+
+    const part3Banner = `
+      <div style="margin-top:14px; padding:12px 14px; border:1px solid var(--accent); border-radius:10px; background:var(--accent-soft); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+        <div>
+          <strong>Part 3 — Unit Black-Letter Drills (${unitQCount} Questions for ${unit.title.split("—")[0].trim()})</strong>
+          <div style="font-size:12px; color:var(--muted);">Drill this unit's concepts right below in Step B, or launch Free Drill for custom sub-topic filtering.</div>
+        </div>
+        <button class="btn-sm" onclick="openUnitInFreeDrill('${unit.course}', '${unit.id}')">Open in Free Drill ↗</button>
+      </div>`;
+
+    const part4Html = `
+      <div style="margin-top:14px; padding:14px; border:1px solid var(--border); border-radius:10px; background:var(--surface);">
+        <h4 style="margin:0 0 8px 0; font-size:15px;">Part 4 — CREAC Exam-Writing Template &amp; Guided Recall Check</h4>
+        <pre style="white-space:pre-wrap; font-family:inherit; font-size:13px; background:var(--surface-2); padding:12px; border-radius:8px; border:1px solid var(--border); line-height:1.55;">${unit.creac || ""}</pre>
+        ${(unit.recalls && unit.recalls.length) ? `
+          <div style="margin-top:10px;">
+            <strong style="font-size:13px;">Guided Element Recall Check:</strong>
+            ${unit.recalls.map((rc, rIdx) => `
+              <details style="margin-top:6px; padding:8px 10px; border:1px solid var(--border); border-radius:8px; background:var(--surface-2);">
+                <summary style="cursor:pointer; font-weight:600; font-size:13px;">Q${rIdx + 1}: ${rc.cue} (Click to Reveal Checklist)</summary>
+                <div style="margin-top:6px; font-size:13px; color:var(--green);"><strong>Element Checklist:</strong> ${rc.answer}</div>
+              </details>
+            `).join("")}
+          </div>` : ""}
+      </div>`;
+
+    box.innerHTML = `
+      <div style="margin-bottom:8px; display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+        <span class="mode-pill mode-foundation">${unit.course}</span>
+        ${unit.optional ? '<span class="mode-pill mode-hold">Optional / Fast Review Unit</span>' : '<span class="mode-pill mode-exam">Priority Deep Learning Unit</span>'}
+        <span class="badge-date">${unitQCount} Unit Drill Questions</span>
+      </div>
+      <h4 style="margin:6px 0 10px 0; font-size:15px;">Part 1 — Deep Concept Breakdown &amp; Black-Letter Rules</h4>
+      ${part1Sections}
+      ${starredHtml}
+      ${flowHtml}
+      ${part2Html}
+      ${part3Banner}
+      ${part4Html}
+    `;
+  };
+
+  const origOpenWs = window.openWorkspaceForUnit;
+  window.openWorkspaceForUnit = function(unitId) {
+    if (typeof origOpenWs === "function") origOpenWs(unitId);
+    const u = SYLLABUS_UNITS.find(x => x.id === unitId) || SYLLABUS_UNITS[0];
+    if (u) {
+      window.flowStepIdx = 0;
+      window.flowOutcome = "";
+      renderDeepUnit(u);
+    }
+  };
+
+  // Free Drill Standalone Controller
+  let fdPool = [];
+  let fdIdx = 0;
+  let fdAnswered = false;
+
+  window.openUnitInFreeDrill = function(course, unitId) {
+    switchTab("freedrill");
+    const cSel = document.getElementById("fd-course");
+    if (cSel) { cSel.value = course; onFdCourseChange(); }
+    const uSel = document.getElementById("fd-unit");
+    if (uSel) { uSel.value = unitId; onFdUnitChange(); }
+  };
+
+  window.onFdCourseChange = function() {
+    const c = document.getElementById("fd-course").value;
+    const uSel = document.getElementById("fd-unit");
+    const units = SYLLABUS_UNITS.filter(u => c === "ALL" || u.course === c);
+    uSel.innerHTML = '<option value="ALL">All Units</option>' + units.map(u => `<option value="${u.id}">${u.course} — ${u.title}</option>`).join("");
+    onFdUnitChange();
+  };
+
+  window.onFdUnitChange = function() {
+    const c = document.getElementById("fd-course").value;
+    const u = document.getElementById("fd-unit").value;
+    const sSel = document.getElementById("fd-sub");
+    const qs = MCQ_BANK.filter(q => (c === "ALL" || q.course === c) && (u === "ALL" || q.unit === u));
+    const subs = Array.from(new Set(qs.map(q => q.sub).filter(Boolean))).sort();
+    sSel.innerHTML = '<option value="ALL">All Sub-Topics (' + qs.length + ')</option>' + subs.map(s => `<option value="${s}">${s}</option>`).join("");
+    resetFreeDrill();
+  };
+
+  window.resetFreeDrill = function() {
+    const c = document.getElementById("fd-course").value;
+    const u = document.getElementById("fd-unit").value;
+    const sub = document.getElementById("fd-sub").value;
+    fdPool = MCQ_BANK.filter(q => (c === "ALL" || q.course === c) && (u === "ALL" || q.unit === u) && (sub === "ALL" || q.sub === sub));
+    fdIdx = 0;
+    fdAnswered = false;
+    const badge = document.getElementById("fd-count-badge");
+    if (badge) badge.textContent = fdPool.length + " Questions";
+    renderFreeDrillCard();
+  };
+
+  window.answerFreeDrill = function(optIdx) {
+    if (fdAnswered || !fdPool.length) return;
+    fdAnswered = true;
+    const q = fdPool[fdIdx];
+    const btns = document.querySelectorAll("#fd-options .option-btn");
+    btns.forEach((b, i) => {
+      if (i === q.ans) b.classList.add("correct");
+      else if (i === optIdx) b.classList.add("wrong");
+    });
+    const fb = document.getElementById("fd-feedback");
+    if (fb) {
+      fb.classList.remove("hidden");
+      fb.innerHTML = `<div class="rule-box" style="border-left-color:${optIdx === q.ans ? 'var(--green)' : 'var(--red)'};">
+        <strong>${optIdx === q.ans ? '✓ Correct!' : '✗ Missed — Review Black-Letter Rule:'}</strong> ${q.exp || ""}
+      </div>`;
+    }
+  };
+
+  window.nextFreeDrill = function() {
+    if (!fdPool.length) return;
+    fdIdx = (fdIdx + 1) % fdPool.length;
+    fdAnswered = false;
+    renderFreeDrillCard();
+  };
+
+  function renderFreeDrillCard() {
+    const body = document.getElementById("fd-body");
+    if (!body) return;
+    if (!fdPool.length) {
+      body.innerHTML = '<p style="color:var(--muted);">No questions match this filter yet.</p>';
+      return;
+    }
+    const q = fdPool[fdIdx];
+    body.innerHTML = `
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; flex-wrap:wrap; gap:6px;">
+        <span class="mode-pill mode-foundation">${q.course} · ${q.unit} · ${q.sub}</span>
+        <span style="font-size:12px; color:var(--muted);">Question ${fdIdx + 1} of ${fdPool.length}</span>
+      </div>
+      <div style="font-size:14.5px; font-weight:600; line-height:1.55; margin-bottom:12px;">${q.q}</div>
+      <div id="fd-options">
+        ${q.opts.map((o, i) => `<button class="option-btn" onclick="answerFreeDrill(${i})"><strong>${String.fromCharCode(65+i)}.</strong> ${o}</button>`).join("")}
+      </div>
+      <div id="fd-feedback" class="hidden" style="margin-top:10px;"></div>
+      <div style="margin-top:12px; display:flex; gap:8px;">
+        <button class="btn-primary" onclick="nextFreeDrill()">Next Question →</button>
+      </div>
+    `;
+  }
+
+  // Patch switchTab to support 'freedrill'
+  const origSwitchTab = window.switchTab;
+  window.switchTab = function(tab) {
+    const fdSec = document.getElementById("view-freedrill");
+    const fdTab = document.getElementById("tab-freedrill");
+    if (fdSec) fdSec.classList.toggle("hidden", tab !== "freedrill");
+    if (fdTab) fdTab.classList.toggle("active", tab === "freedrill");
+    if (tab === "freedrill") {
+      ["today", "workspace", "syllabus", "roadmap", "lpssim", "examsoft"].forEach(t => {
+        const s = document.getElementById("view-" + t);
+        const b = document.getElementById("tab-" + t);
+        if (s) s.classList.add("hidden");
+        if (b) b.classList.remove("active");
+      });
+      if (!fdPool.length) onFdCourseChange();
+      return;
+    }
+    if (typeof origSwitchTab === "function") origSwitchTab(tab);
+  };
+
+  // Initial render refresh
+  if (typeof renderAll === "function") renderAll();
+  if (!state.activeUnitId || state.activeUnitId === "T1") {
+    state.activeUnitId = "T2";
+  }
+  openWorkspaceForUnit(state.activeUnitId);
+})();
+</script>
+
 </body>
 </html>
