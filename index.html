@@ -1508,8 +1508,8 @@ let state = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null") || {
   recallChecks: {}, // unitId -> { elements, majority, trap }
   qStats: {},       // qId -> { attempts, streak, misses, lastTag, confidence }
   studyMinutes: { Torts: 0, Crim: 0, Contracts: 0, LPS: 0 },
-  sheetUrl: "",
-  autoSync: false
+  sheetUrl: "https://docs.google.com/spreadsheets/d/1RFw8LZunyuSz1PWF-9fDwGeHkk6aCtlsLNf1mqRCFGQ/gviz/tq?tqx=out:csv&sheet=Updates",
+  autoSync: true
 };
 
 function saveState() {
@@ -2141,6 +2141,7 @@ function setSimDate(dateStr) {
   state.simDate = dateStr;
   saveState();
   renderAll();
+if (state.sheetUrl) syncFromSheet();
   switchTab("today");
 }
 
@@ -2215,9 +2216,20 @@ async function syncFromSheet() {
         const u = SYLLABUS_UNITS.find(x => x.id === uid);
         if (u) {
           if (payload.rule) u.rule = payload.rule;
+          if (payload.intuition) u.intuition = payload.intuition;
+          if (payload.exam) u.exam = payload.exam;
+          if (payload.cases) u.cases = payload.cases;
+          if (payload.case_stories) u.case_stories = payload.case_stories;
           if (payload.trigger) u.trigger = payload.trigger;
           if (payload.trap) u.trap = payload.trap;
           if (payload.title) u.title = payload.title;
+          if (!u.sections || !u.sections.length) {
+            u.sections = [{ heading: u.title, rule: u.rule || "", plain: u.intuition || "", whyExam: u.exam || "" }];
+          } else {
+            if (payload.rule) u.sections[0].rule = payload.rule;
+            if (payload.intuition) u.sections[0].plain = payload.intuition;
+            if (payload.exam) u.sections[0].whyExam = payload.exam;
+          }
           applied++;
         } else if (action === "upsert_unit" && (payload.rule || payload.title)) {
           SYLLABUS_UNITS.push({
@@ -2227,6 +2239,11 @@ async function syncFromSheet() {
             title: payload.title || uid,
             trigger: payload.trigger || ("Fact Trigger: " + (payload.title || uid)),
             rule: payload.rule || "",
+            intuition: payload.intuition || "",
+            exam: payload.exam || "",
+            cases: payload.cases || [],
+            case_stories: payload.case_stories || [],
+            sections: [{ heading: payload.title || uid, rule: payload.rule || "", plain: payload.intuition || "", whyExam: payload.exam || "" }],
             trap: payload.trap || "Exam Trap: Apply controlling elements carefully."
           });
           applied++;
@@ -2779,14 +2796,20 @@ if (window.PHASE1_DATA && Array.isArray(window.PHASE1_DATA.mcqs) && window.PHASE
     const isOpt = typeof optionalIds !== "undefined" ? optionalIds.has(unit.id) : !!unit.optional;
     const isLps = /lps|legal practice/i.test(unit.course || "");
 
-    const stripDanaAndNoise = (t) => String(t || "")
+    const cleanStr = (t) => String(t || "")
       .replace(/\*\*(.+?)\*\*/g, "$1")
       .replace(/\b(?:Worked\s*Hypo|Work\s*Typo)\s*:?\s*/gi, "")
       .replace(/[^.!?\n]*\b(?:Dana|Danna)\b[^.!?\n]*[.!?]?/gi, "")
-      .replace(/\s*->\s*/g, " ")
-      .replace(/\\n/g, " ")
-      .replace(/\s{2,}/g, " ")
+      .replace(/\\n/g, "\n")
       .trim();
+
+    // Format numbered/lettered elements cleanly onto separate lines
+    const formatRuleElements = (t) => {
+      let out = cleanStr(t);
+      out = out.replace(/\s+(\([a-z0-9]{1,3}\))\s+/gi, "<br/><strong>$1</strong> ");
+      out = out.replace(/\s+(\d+\.)\s+/g, "<br/><strong>$1</strong> ");
+      return out.replace(/\n+/g, "<br/>");
+    };
 
     const parsePyLiteral = (str) => {
       const t = String(str || "").trim();
@@ -2821,72 +2844,78 @@ if (window.PHASE1_DATA && Array.isArray(window.PHASE1_DATA.mcqs) && window.PHASE
 
     const signals = unpackArray(unit.signals).map(sig => {
       const raw = typeof sig === "string" ? sig : (sig.text || sig.signal || "");
-      return stripDanaAndNoise(raw.replace(/^EXAM SIGNAL\s*-\s*/i, ""));
+      return cleanStr(raw.replace(/^EXAM SIGNAL\s*-\s*/i, ""));
     }).filter(Boolean);
 
     const traps = unpackArray(unit.traps).map(tr => {
       const raw = typeof tr === "string" ? tr : (tr.text || tr.trap || "");
-      return stripDanaAndNoise(raw.replace(/^EXAM TRAP:\s*/i, ""));
+      return cleanStr(raw.replace(/^EXAM TRAP:\s*/i, ""));
     }).filter(Boolean);
 
-    // Plain English first, rule/restatement below, exam focus + signals/traps integrated underneath
-    const part1Sections = (unit.sections || []).map((sec, idx) => {
-      const heading = stripDanaAndNoise(sec.heading || ("Topic " + (idx + 1)));
-      const plain = stripDanaAndNoise(sec.plain || sec.rule || "");
-      const rule = sec.rule && sec.plain ? stripDanaAndNoise(sec.rule) : "";
-      const whyExam = stripDanaAndNoise(sec.whyExam || "");
-      const sigNote = signals[idx] ? `<div style="font-size:12px; font-style:italic; color:var(--accent); margin-top:6px;">Signal: ${signals[idx]}</div>` : "";
-      const trapNote = traps[idx] ? `<div style="font-size:12px; font-style:italic; color:var(--amber); margin-top:4px;">Trap: ${traps[idx]}</div>` : "";
-      const examNote = whyExam ? `<div style="font-size:12px; font-family:Georgia, serif; color:var(--muted); margin-top:8px; padding-top:6px; border-top:1px dashed var(--border);"><em>Exam Focus:</em> ${whyExam}</div>` : "";
+    const sections = (unit.sections && unit.sections.length)
+      ? unit.sections
+      : [{ heading: unit.title, rule: unit.rule || "", plain: unit.intuition || "", whyExam: unit.exam || "" }];
+
+    const part1Sections = sections.map((sec, idx) => {
+      const heading = cleanStr(sec.heading || ("Topic " + (idx + 1)));
+      const ruleHtml = formatRuleElements(sec.rule || unit.rule || sec.plain || "");
+      const plainText = cleanStr((sec.rule || unit.rule) && sec.plain ? sec.plain : (unit.intuition || ""));
+      const whyText = cleanStr(sec.whyExam || unit.exam || "");
+      const sigLine = signals[idx] ? `<div style="font-size:12px; color:var(--accent); margin-top:6px;"><strong>Exam Signal:</strong> ${signals[idx]}</div>` : "";
+      const trapLine = traps[idx] ? `<div style="font-size:12px; color:var(--amber); margin-top:4px;"><strong>Trap:</strong> ${traps[idx]}</div>` : "";
 
       return `
         <div style="padding:14px 16px; border:1px solid var(--border); border-radius:10px; background:var(--surface); margin-bottom:12px;">
-          <div style="font-weight:700; font-size:15px; color:var(--text); margin-bottom:6px;">${heading}</div>
-          <div style="font-size:13.5px; line-height:1.6; color:var(--text);">${plain}</div>
-          ${rule ? `<div style="font-size:12.5px; color:var(--muted); background:var(--surface-2); padding:8px 10px; border-radius:6px; margin-top:8px; line-height:1.5;"><strong>Rule / Restatement:</strong> ${rule}</div>` : ""}
-          ${sigNote}
-          ${trapNote}
-          ${examNote}
+          <div style="font-weight:700; font-size:15px; color:var(--text); margin-bottom:8px;">${idx + 1}. ${heading}</div>
+          <div style="font-size:13.5px; padding:10px 12px; background:var(--surface-2); border-left:3px solid var(--accent); border-radius:6px; line-height:1.6;">
+            <strong>Rule / Restatement:</strong> ${ruleHtml}
+          </div>
+          ${plainText ? `<div style="font-size:13px; margin-top:8px; line-height:1.55;"><strong>Plain English:</strong> ${plainText}</div>` : ""}
+          ${whyText ? `<div style="font-size:12.5px; color:var(--muted); margin-top:8px; padding-top:8px; border-top:1px dashed var(--border); line-height:1.5;"><strong>Why This Exists / Exam Focus:</strong> ${whyText}</div>` : ""}
+          ${sigLine}
+          ${trapLine}
         </div>`;
     }).join("");
 
-    const extraSignals = signals.slice((unit.sections || []).length);
-    const extraTraps = traps.slice((unit.sections || []).length);
+    const extraSignals = signals.slice(sections.length);
+    const extraTraps = traps.slice(sections.length);
+    const stories = Array.isArray(unit.case_stories) ? unit.case_stories : [];
 
     const casesHtml = unpackArray(unit.cases).map(c => {
       if (typeof c === "string") {
-        const cleaned = stripDanaAndNoise(c);
+        const cleaned = cleanStr(c);
         if (!cleaned) return "";
         return `<div style="padding:10px 12px; border:1px solid var(--border); border-radius:8px; background:var(--surface); margin-bottom:8px; font-size:13px; line-height:1.55;">${cleaned}</div>`;
       }
-      const name = stripDanaAndNoise(c.name || c.title || "");
-      const facts = stripDanaAndNoise(c.facts || c.text || "");
-      const proves = stripDanaAndNoise(c.proves || c.holding || c.rule || "");
+      const name = cleanStr(c.name || c.title || "");
+      const matchStory = stories.find(st => st.case && name && st.case.toLowerCase().includes(name.split(" ")[0].toLowerCase()));
+      const facts = cleanStr(c.facts || c.text || (matchStory && matchStory.story) || "");
+      const proves = cleanStr(c.proves || c.holding || c.rule || "");
       if (!name && !facts && !proves) return "";
       return `<div style="padding:10px 12px; border:1px solid var(--border); border-radius:8px; background:var(--surface); margin-bottom:8px; font-size:13px; line-height:1.55;">
-        ${name ? `<div style="font-weight:700; color:var(--accent); margin-bottom:3px;">${name}</div>` : ""}
-        ${facts ? `<div style="margin-bottom:3px;">${facts}</div>` : ""}
-        ${proves ? `<div style="font-size:12.5px; font-family:Georgia, serif; color:var(--muted); margin-top:4px;"><em>Takeaway:</em> ${proves}</div>` : ""}
+        ${name ? `<div style="font-weight:700; color:var(--accent); margin-bottom:4px;">${name}</div>` : ""}
+        ${facts ? `<div style="margin-bottom:4px;"><strong>Facts:</strong> ${facts}</div>` : ""}
+        ${proves ? `<div style="font-size:12.5px; color:var(--muted); margin-top:4px;"><strong>Rule / Holding:</strong> ${proves}</div>` : ""}
       </div>`;
     }).filter(Boolean).join("");
 
-    const notesBlockHtml = (extraSignals.length || extraTraps.length) ? `
+    const extraNotesHtml = (extraSignals.length || extraTraps.length) ? `
       <div style="margin-top:10px; padding-top:10px; border-top:1px solid var(--border);">
-        ${extraSignals.map(sg => `<div style="font-size:12px; font-style:italic; color:var(--accent); margin-bottom:4px;">Signal: ${sg}</div>`).join("")}
-        ${extraTraps.map(tp => `<div style="font-size:12px; font-style:italic; color:var(--amber); margin-bottom:4px;">Trap: ${tp}</div>`).join("")}
+        ${extraSignals.map(sg => `<div style="font-size:12px; color:var(--accent); margin-bottom:4px;"><strong>Exam Signal:</strong> ${sg}</div>`).join("")}
+        ${extraTraps.map(tp => `<div style="font-size:12px; color:var(--amber); margin-bottom:4px;"><strong>Trap:</strong> ${tp}</div>`).join("")}
       </div>` : "";
 
-    const part2Html = (casesHtml || notesBlockHtml) ? `
+    const part2Html = (casesHtml || extraNotesHtml) ? `
       <div style="margin-top:14px; padding:12px 14px; border:1px solid var(--border); border-radius:10px; background:var(--surface);">
-        <h4 style="margin:0 0 10px 0; font-size:14px;">Cases &amp; Notes</h4>
+        <h4 style="margin:0 0 10px 0; font-size:14px;">Cases &amp; Application</h4>
         ${casesHtml}
-        ${notesBlockHtml}
+        ${extraNotesHtml}
       </div>` : "";
 
     const part4Html = isLps ? `
       <div style="margin-top:14px; padding:14px; border:1px solid var(--border); border-radius:10px; background:var(--surface);">
         <h4 style="margin:0 0 8px 0; font-size:14px;">LPS CREAC Template</h4>
-        <pre style="white-space:pre-wrap; font-family:inherit; font-size:12.5px; background:var(--surface-2); padding:10px; border-radius:6px; border:1px solid var(--border); line-height:1.5;">${stripDanaAndNoise(unit.creac || "")}</pre>
+        <pre style="white-space:pre-wrap; font-family:inherit; font-size:12.5px; background:var(--surface-2); padding:10px; border-radius:6px; border:1px solid var(--border); line-height:1.5;">${cleanStr(unit.creac || "")}</pre>
       </div>` : "";
 
     box.innerHTML = `
