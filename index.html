@@ -2776,10 +2776,15 @@ if (window.PHASE1_DATA && Array.isArray(window.PHASE1_DATA.mcqs) && window.PHASE
     if (!box || !unit) return;
     const bank = Array.isArray(window.MCQ_BANK) ? window.MCQ_BANK : (typeof QUESTION_BANK !== "undefined" ? QUESTION_BANK : []);
     const unitQCount = bank.filter(q => q.unit === unit.id).length;
-    const isOpt = optionalIds.has(unit.id);
+    const isOpt = typeof optionalIds !== "undefined" ? optionalIds.has(unit.id) : !!unit.optional;
     const isLps = /lps|legal practice/i.test(unit.course || "");
 
-    const fmtMd = (t) => String(t || "").replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>").replace(/\\n/g, "<br/>");
+    const fmtMd = (t) => String(t || "")
+      .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+      .replace(/\b(?:Worked\s*Hypo|Work\s*Typo)\s*:?\s*/gi, "")
+      .replace(/\\n/g, "<br/>")
+      .replace(/\n/g, "<br/>")
+      .trim();
 
     const parsePyLiteral = (str) => {
       const t = String(str || "").trim();
@@ -2812,19 +2817,20 @@ if (window.PHASE1_DATA && Array.isArray(window.PHASE1_DATA.mcqs) && window.PHASE
       return out;
     };
 
+    // Rule / Restatement FIRST, Plain English UNDERNEATH
     const part1Sections = (unit.sections || []).map((sec, idx) => `
-      <div style="padding:10px 12px; border:1px solid var(--border); border-radius:8px; background:var(--surface); margin-bottom:8px;">
-        <div style="font-weight:700; font-size:14px; color:var(--accent); margin-bottom:4px;">${idx + 1}. ${fmtMd(sec.heading)}</div>
-        ${sec.plain ? `<div style="font-size:13px; margin-bottom:6px; line-height:1.5;">${fmtMd(sec.plain)}</div>` : ""}
-        ${sec.rule ? `<div style="font-size:13px; padding:8px 10px; background:var(--surface-2); border-left:3px solid var(--accent); border-radius:6px; margin:6px 0;"><strong>Rule:</strong> ${fmtMd(sec.rule)}</div>` : ""}
-        ${sec.whyExam ? `<div style="font-size:12px; color:var(--muted); margin-top:4px;"><strong>Exam Focus:</strong> ${fmtMd(sec.whyExam)}</div>` : ""}
+      <div style="padding:14px 16px; border:1px solid var(--border); border-radius:10px; background:var(--surface); margin-bottom:12px;">
+        <div style="font-weight:700; font-size:15px; color:var(--accent); margin-bottom:8px;">${idx + 1}. ${fmtMd(sec.heading)}</div>
+        ${sec.rule ? `<div style="font-size:13.5px; padding:10px 12px; background:var(--surface-2); border-left:3px solid var(--accent); border-radius:6px; margin-bottom:8px; line-height:1.55;"><strong>Rule / Restatement:</strong> ${fmtMd(sec.rule)}</div>` : ""}
+        ${sec.plain ? `<div style="font-size:13px; color:var(--text); margin-bottom:6px; line-height:1.55;"><strong>Plain English:</strong> ${fmtMd(sec.plain)}</div>` : ""}
+        ${sec.whyExam ? `<div style="font-size:12px; color:var(--muted); margin-top:6px;"><strong>Exam Focus:</strong> ${fmtMd(sec.whyExam)}</div>` : ""}
       </div>
     `).join("");
 
     const starredHtml = (unit.starredRules && unit.starredRules.length) ? `
-      <div style="padding:12px; border:1px solid var(--accent); border-radius:8px; background:var(--surface); margin:10px 0;">
-        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px; margin-bottom:8px;">
-          <strong style="font-size:13.5px;">Verbatim Rules</strong>
+      <div style="padding:14px 16px; border:1px solid var(--accent); border-radius:10px; background:var(--surface); margin:12px 0;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:10px;">
+          <strong style="font-size:14px;">★ Key Rules &amp; Restatements</strong>
           <div style="display:flex; gap:5px; flex-wrap:wrap;">
             <button class="btn-sm ${window.clozeLevel===0?'active-filter':''}" onclick="setClozeLevel(0)">Full</button>
             <button class="btn-sm ${window.clozeLevel===25?'active-filter':''}" onclick="setClozeLevel(25)">25% Blank</button>
@@ -2833,96 +2839,100 @@ if (window.PHASE1_DATA && Array.isArray(window.PHASE1_DATA.mcqs) && window.PHASE
           </div>
         </div>
         ${unit.starredRules.map(sr => `
-          <div style="padding:8px 10px; border-left:3px solid var(--accent); background:var(--surface-2); border-radius:6px; margin-bottom:6px;">
+          <div style="padding:10px 12px; border-left:3px solid var(--accent); background:var(--surface-2); border-radius:6px; margin-bottom:8px;">
             <div style="font-size:12px; font-weight:700; color:var(--accent);">${fmtMd(sr.citation)} — ${fmtMd(sr.name)}</div>
-            <div style="font-size:13px; margin-top:4px; line-height:1.5; font-style:italic;">"${maskText(sr.text, window.clozeLevel)}"</div>
+            <div style="font-size:13px; margin-top:4px; line-height:1.55; font-style:italic;">"${maskText(sr.text, window.clozeLevel)}"</div>
           </div>
         `).join("")}
       </div>` : "";
 
+    // Exam Signals placed high up right after rules (not buried at the bottom)
+    const signalsList = unpackArray(unit.signals).map(sig => {
+      const txt = typeof sig === "string" ? sig : (sig.text || sig.signal || "");
+      const cleaned = fmtMd(txt.replace(/^EXAM SIGNAL\s*-\s*/i, ""));
+      if (!cleaned) return "";
+      return `<div style="padding:8px 12px; border-left:3px solid var(--accent); background:var(--accent-soft); border-radius:6px; margin-bottom:6px; font-size:13px; line-height:1.5;">${cleaned}</div>`;
+    }).filter(Boolean).join("");
+
+    const signalsHtml = signalsList ? `
+      <div style="margin:12px 0; padding:12px 14px; border:1px solid var(--border); border-radius:10px; background:var(--surface);">
+        <h4 style="margin:0 0 8px 0; font-size:14px;">⚡ Exam Signals ("Spot It")</h4>
+        ${signalsList}
+      </div>` : "";
+
+    // Only render flowcharts with > 3 steps so brief 3-step trees don't clutter
     let flowHtml = "";
-    if (unit.flowchart && unit.flowchart.steps && unit.flowchart.steps.length) {
+    if (unit.flowchart && Array.isArray(unit.flowchart.steps) && unit.flowchart.steps.length > 3) {
       const curStep = unit.flowchart.steps[window.flowStepIdx] || unit.flowchart.steps[0];
       flowHtml = `
-        <div style="padding:12px; border:1px solid var(--border); border-radius:8px; background:var(--surface-2); margin:10px 0;">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-            <strong style="font-size:13.5px;">Decision Flowchart: ${fmtMd(unit.flowchart.title)}</strong>
+        <div style="padding:14px 16px; border:1px solid var(--border); border-radius:10px; background:var(--surface-2); margin:12px 0;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <strong style="font-size:14px;">Decision Flowchart: ${fmtMd(unit.flowchart.title)}</strong>
             <button class="btn-sm" onclick="resetFlow()">Restart</button>
           </div>
-          <div style="padding:10px; background:var(--surface); border-radius:6px; border:1px solid var(--border);">
+          <div style="padding:12px; background:var(--surface); border-radius:8px; border:1px solid var(--border);">
             <div style="font-size:11px; font-weight:700; color:var(--muted); margin-bottom:4px;">STEP ${window.flowStepIdx + 1} OF ${unit.flowchart.steps.length}</div>
-            <div style="font-size:13.5px; font-weight:600; margin-bottom:8px;">${fmtMd(curStep.q)}</div>
+            <div style="font-size:13.5px; font-weight:600; margin-bottom:10px;">${fmtMd(curStep.q)}</div>
             <div style="display:flex; gap:8px;">
               <button class="btn-primary" onclick="advanceFlow('yes')">Yes</button>
               <button class="btn-ghost" onclick="advanceFlow('no')">No</button>
             </div>
-            ${window.flowOutcome ? `<div style="margin-top:8px; padding:8px 10px; border-left:3px solid var(--accent); background:var(--accent-soft); border-radius:6px; font-size:13px;"><strong>Result:</strong> ${fmtMd(window.flowOutcome)}</div>` : ""}
+            ${window.flowOutcome ? `<div style="margin-top:10px; padding:8px 12px; border-left:3px solid var(--accent); background:var(--accent-soft); border-radius:6px; font-size:13px;"><strong>Result:</strong> ${fmtMd(window.flowOutcome)}</div>` : ""}
           </div>
         </div>`;
     }
 
     const casesHtml = unpackArray(unit.cases).map(c => {
-      if (typeof c === "string") return `<div style="padding:8px 10px; border:1px solid var(--border); border-radius:8px; background:var(--surface); margin-bottom:6px; font-size:13px;">${fmtMd(c)}</div>`;
-      const name = c.name || c.title || "";
-      const facts = c.facts || c.text || "";
-      const proves = c.proves || c.holding || c.rule || "";
+      if (typeof c === "string") {
+        const cleaned = fmtMd(c);
+        if (!cleaned) return "";
+        return `<div style="padding:10px 12px; border:1px solid var(--border); border-radius:8px; background:var(--surface); margin-bottom:8px; font-size:13px; line-height:1.5;">${cleaned}</div>`;
+      }
+      const name = fmtMd(c.name || c.title || "");
+      const facts = fmtMd(c.facts || c.text || "");
+      const proves = fmtMd(c.proves || c.holding || c.rule || "");
       const quote = c.quote ? `<div style="font-style:italic; color:var(--muted); margin-top:4px; font-size:12.5px;">"${fmtMd(c.quote)}"</div>` : "";
       if (!name && !facts && !proves) return "";
-      return `<div style="padding:8px 10px; border:1px solid var(--border); border-radius:8px; background:var(--surface); margin-bottom:6px; font-size:13px;">
-        ${name ? `<div style="font-weight:700; color:var(--accent); margin-bottom:3px;">${fmtMd(name)}</div>` : ""}
-        ${facts ? `<div style="margin-bottom:3px;"><strong>Facts:</strong> ${fmtMd(facts)}</div>` : ""}
-        ${proves ? `<div><strong>Rule / Takeaway:</strong> ${fmtMd(proves)}</div>` : ""}
+      return `<div style="padding:10px 12px; border:1px solid var(--border); border-radius:8px; background:var(--surface); margin-bottom:8px; font-size:13px; line-height:1.5;">
+        ${name ? `<div style="font-weight:700; color:var(--accent); margin-bottom:4px;">${name}</div>` : ""}
+        ${facts ? `<div style="margin-bottom:4px;"><strong>Facts:</strong> ${facts}</div>` : ""}
+        ${proves ? `<div><strong>Rule / Takeaway:</strong> ${proves}</div>` : ""}
         ${quote}
       </div>`;
     }).filter(Boolean).join("");
 
-    const signalsHtml = unpackArray(unit.signals).map(sig => {
-      const txt = typeof sig === "string" ? sig : (sig.text || sig.signal || "");
-      if (!txt.trim()) return "";
-      return `<div style="padding:7px 10px; border-left:3px solid var(--accent); background:var(--accent-soft); border-radius:6px; margin-bottom:6px; font-size:12.5px;">${fmtMd(txt.replace(/^EXAM SIGNAL\s*-\s*/i, ""))}</div>`;
-    }).filter(Boolean).join("");
-
     const trapsHtml = unpackArray(unit.traps).map(tr => {
       const txt = typeof tr === "string" ? tr : (tr.text || tr.trap || "");
-      if (!txt.trim()) return "";
-      return `<div style="padding:7px 10px; border-left:3px solid var(--amber); background:var(--amber-soft); border-radius:6px; margin-bottom:6px; font-size:12.5px;"><strong>Trap:</strong> ${fmtMd(txt.replace(/^EXAM TRAP:\s*/i, ""))}</div>`;
+      const cleaned = fmtMd(txt.replace(/^EXAM TRAP:\s*/i, ""));
+      if (!cleaned) return "";
+      return `<div style="padding:8px 12px; border-left:3px solid var(--amber); background:var(--amber-soft); border-radius:6px; margin-bottom:6px; font-size:13px; line-height:1.5;"><strong>Trap:</strong> ${cleaned}</div>`;
     }).filter(Boolean).join("");
 
-    const part2Html = `
-      <div style="margin-top:12px;">
-        <h4 style="margin:0 0 8px 0; font-size:14px;">Part 2 — Cases, Signals &amp; Traps</h4>
+    const part2Html = (casesHtml || trapsHtml) ? `
+      <div style="margin-top:14px; padding:12px 14px; border:1px solid var(--border); border-radius:10px; background:var(--surface);">
+        <h4 style="margin:0 0 10px 0; font-size:14px;">Cases &amp; Exam Traps</h4>
         ${casesHtml}
-        ${signalsHtml}
         ${trapsHtml}
-      </div>`;
-
-    const part3Banner = `
-      <div style="margin-top:12px; padding:10px 12px; border:1px solid var(--accent); border-radius:8px; background:var(--accent-soft); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
-        <div>
-          <strong style="font-size:13px;">Part 3 — Unit Drills (${unitQCount} Questions)</strong>
-          <div style="font-size:12px; color:var(--muted);">Drill below in Step B or filter by sub-topic in Free Drill.</div>
-        </div>
-        <button class="btn-sm" onclick="openUnitInFreeDrill('${unit.course}', '${unit.id}')">Free Drill</button>
-      </div>`;
+      </div>` : "";
 
     const part4Html = isLps ? `
-      <div style="margin-top:12px; padding:12px; border:1px solid var(--border); border-radius:8px; background:var(--surface);">
-        <h4 style="margin:0 0 8px 0; font-size:14px;">Part 4 — LPS CREAC Template</h4>
+      <div style="margin-top:14px; padding:14px; border:1px solid var(--border); border-radius:10px; background:var(--surface);">
+        <h4 style="margin:0 0 8px 0; font-size:14px;">LPS CREAC Template</h4>
         <pre style="white-space:pre-wrap; font-family:inherit; font-size:12.5px; background:var(--surface-2); padding:10px; border-radius:6px; border:1px solid var(--border); line-height:1.5;">${fmtMd(unit.creac || "")}</pre>
       </div>` : "";
 
     box.innerHTML = `
-      <div style="margin-bottom:8px; display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
+      <div style="margin-bottom:10px; display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
         <span class="mode-pill mode-foundation">${unit.course}</span>
         ${isOpt ? '<span class="mode-pill mode-hold">Optional / Review</span>' : '<span class="mode-pill mode-exam">Priority Unit</span>'}
         <span class="badge-date">${unitQCount} Questions</span>
       </div>
-      <h4 style="margin:6px 0 8px 0; font-size:14px;">Part 1 — Core Rules &amp; Concepts</h4>
+      <h4 style="margin:6px 0 10px 0; font-size:14px;">Rules &amp; Concepts</h4>
       ${part1Sections}
       ${starredHtml}
+      ${signalsHtml}
       ${flowHtml}
       ${part2Html}
-      ${part3Banner}
       ${part4Html}
     `;
   };
