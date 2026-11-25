@@ -1791,12 +1791,17 @@ function openWorkspaceForUnit(unitId, blockObj = null) {
   `;
 
   ruleBlurred = false;
-  document.getElementById("blur-rule-btn").textContent = "Hide Rule (Blank-Page Recall)";
-  document.getElementById("ws-rule-content").innerHTML = `
-    <div class="trigger-box"><strong>${unit.trigger}</strong></div>
-    <div class="rule-box"><strong>Controlling Rule:</strong> ${unit.rule}</div>
-    <div class="trap-box"><strong>High-Yield Exam Trap:</strong> ${unit.trap}</div>
-  `;
+  const blurBtn = document.getElementById("blur-rule-btn");
+  if (blurBtn) blurBtn.textContent = "Hide Rule (Blank-Page Recall)";
+  if (typeof renderDeepUnit === "function" && unit.sections && unit.sections.length) {
+    renderDeepUnit(unit);
+  } else {
+    document.getElementById("ws-rule-content").innerHTML = `
+      <div class="trigger-box"><strong>${unit.trigger}</strong></div>
+      <div class="rule-box"><strong>Controlling Rule:</strong> ${unit.rule}</div>
+      <div class="trap-box"><strong>High-Yield Exam Trap:</strong> ${unit.trap}</div>
+    `;
+  }
 
   const recallEl = document.getElementById("ws-recall-input");
   recallEl.value = state.recallNotes[unit.id] || "";
@@ -2053,7 +2058,7 @@ function renderSyllabus() {
         </div>
         <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px;">
           <span class="mode-pill ${ph.cls}">${ph.daysLeft}d to exam</span>
-          <button class="btn-sm" onclick="openWorkspaceForUnit('${u.id}'); switchTab('workspace')">Study &amp; Drill →</button>
+          ${u.optional ? '<span class="badge-date" style="opacity:0.75;">Optional / Mastered</span>' : ''}<button class="btn-sm" onclick="switchTab('workspace'); openWorkspaceForUnit('${u.id}')">Study &amp; Drill →</button>
         </div>
       </div>
     `;
