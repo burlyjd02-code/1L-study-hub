@@ -1793,7 +1793,7 @@ function openWorkspaceForUnit(unitId, blockObj = null) {
   ruleBlurred = false;
   const blurBtn = document.getElementById("blur-rule-btn");
   if (blurBtn) blurBtn.textContent = "Hide Rule (Blank-Page Recall)";
-  if (typeof renderDeepUnit === "function" && unit.sections && unit.sections.length) {
+  if (typeof renderDeepUnit === "function") {
     renderDeepUnit(unit);
   } else {
     document.getElementById("ws-rule-content").innerHTML = `
@@ -2690,12 +2690,12 @@ if (window.PHASE1_DATA && Array.isArray(window.PHASE1_DATA.mcqs) && window.PHASE
   const pMcqs = window.PHASE1_DATA.mcqs || [];
   const optionalIds = new Set(["T1", "Co1", "Co2"]);
 
-  if (pUnits.length && Array.isArray(window.SYLLABUS_UNITS)) {
-    window.SYLLABUS_UNITS.length = 0;
+  if (pUnits.length && typeof SYLLABUS_UNITS !== "undefined" && Array.isArray(SYLLABUS_UNITS)) {
+    SYLLABUS_UNITS.length = 0;
     pUnits.forEach(u => {
       const isOpt = optionalIds.has(u.id);
       const firstSec = (u.sections && u.sections[0]) || {};
-      window.SYLLABUS_UNITS.push({
+      SYLLABUS_UNITS.push({
         ...u,
         optional: isOpt,
         code: u.id,
@@ -2711,8 +2711,8 @@ if (window.PHASE1_DATA && Array.isArray(window.PHASE1_DATA.mcqs) && window.PHASE
     pMcqs.forEach(q => window.MCQ_BANK.push(q));
   }
 
-  if (Array.isArray(window.SCHEDULE_DAYS) && window.SCHEDULE_DAYS.length > 0) {
-    window.SCHEDULE_DAYS[0].blocks = [
+  if (typeof SCHEDULE_DAYS !== "undefined" && Array.isArray(SCHEDULE_DAYS) && SCHEDULE_DAYS.length > 0) {
+    SCHEDULE_DAYS[0].blocks = [
       { id: "b_p1_1", course: "Torts", unit: "T2", mode: "Deep Lesson + Unit Drill", task: "Unit 2: Intentional Infliction of Emotional Distress (IIED) — Outrageousness, Recklessness & Severe Distress" },
       { id: "b_p1_2", course: "Contracts", unit: "Co3", mode: "Deep Lesson + Verbatim Rules", task: "Unit 3: Consideration — Bargain (§ 71), Pre-Existing Duty (§ 73), Modifications (§ 89 & UCC § 2-209(1))" },
       { id: "b_p1_3", course: "Contracts", unit: "Co4", mode: "Deep Lesson + Unit Drill", task: "Unit 4: Promissory Estoppel (§ 90) & Pre-Acceptance Reliance (§ 87(2))" },
